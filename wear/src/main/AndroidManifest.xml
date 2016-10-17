@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="group.g203.myapplication">
+    package="group.g203.acountables">
 
     <uses-feature android:name="android.hardware.type.watch" />
     <application
