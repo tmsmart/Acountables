@@ -1,4 +1,4 @@
-package group.g203.acountables.path.main;
+package group.g203.acountables.path.main.view;
 
 
 import group.g203.acountables.base.view.BaseView;
@@ -6,6 +6,10 @@ import group.g203.acountables.base.view.BaseView;
 public interface MainView extends BaseView {
 
     void displayEmptyView();
+
+    void displayLoading();
+
+    void finishLoading();
 
     void displayCountables();
 
@@ -18,6 +22,8 @@ public interface MainView extends BaseView {
     void displayInfoDialog();
 
     void displaySortDialog();
+
+    void displayCreditsDialog();
 
     void enableAddButton();
 

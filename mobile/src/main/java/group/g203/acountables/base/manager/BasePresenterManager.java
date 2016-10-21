@@ -1,4 +1,4 @@
-package group.g203.acountables.base.presenter;
+package group.g203.acountables.base.manager;
 
 import android.os.Bundle;
 
@@ -6,13 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import group.g203.acountables.base.presenter.BasePresenter;
+
 public class BasePresenterManager {
 
     private static final String PRESENTER_KEY = "presenterKey";
     private final AtomicInteger mAtomicId;
     private int mPresenterId;
     private static BasePresenterManager instance;
-    private static Map<Integer, BaseViewPresenter> mPresenterMap;
+    private static Map<Integer, BasePresenter> mPresenterMap;
 
     public BasePresenterManager() {
         mAtomicId = new AtomicInteger();
@@ -26,7 +28,7 @@ public class BasePresenterManager {
         return instance;
     }
 
-    public <P extends BaseViewPresenter> P getPresenter(Bundle savedInstanceState) {
+    public <P extends BasePresenter> P getPresenter(Bundle savedInstanceState) {
         mPresenterId = savedInstanceState.getInt(PRESENTER_KEY);
         P presenter = null;
         if (mPresenterMap.containsKey(mPresenterId)) {
@@ -36,9 +38,9 @@ public class BasePresenterManager {
         return presenter;
     }
 
-    public <P extends BaseViewPresenter> void savePresenter(P presenter, Bundle outState) {
+    public <P extends BasePresenter> void savePresenter(P presenter, Bundle outState) {
         mPresenterId = mAtomicId.incrementAndGet();
         mPresenterMap.put(mPresenterId, presenter);
-        outState.putLong(PRESENTER_KEY, mPresenterId);
+        outState.putInt(PRESENTER_KEY, mPresenterId);
     }
 }

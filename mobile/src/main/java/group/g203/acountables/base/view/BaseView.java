@@ -1,9 +1,10 @@
 package group.g203.acountables.base.view;
 
-import group.g203.acountables.base.presenter.BaseViewPresenter;
+import group.g203.acountables.base.presenter.BasePresenter;
 
 public interface BaseView {
 
-    <P extends BaseViewPresenter> void setPresenter(P presenter);
+    <P extends BasePresenter> void setPresenter(P presenter);
 
+    <P extends BasePresenter> P getPresenter();
 }

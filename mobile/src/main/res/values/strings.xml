@@ -1,5 +1,46 @@
 <resources>
     <string name="app_name">Acountables</string>
-    <string name="action_settings">Settings</string>
+
+    <!--General Strings-->
+    <string name="ok">Ok</string>
+    <string name="got_it">Got It</string>
+
+    <!--Empty Strings-->
+    <string name="no_countables">No Countables...</string>
+
+    <!--Sort Dialog Strings-->
+    <string name="sort">Sort</string>
+    <string name="sort_title">Sort Countables</string>
+    <string-array name="sort_options">
+        <item>A - Z</item>
+        <item>Z - A</item>
+        <item>Most Recently Updated</item>
+        <item>Least Recently Updated</item>
+        <item>Completed most</item>
+        <item>Completed least</item>
+    </string-array>
+
+    <!--Info Dialog Strings-->
+    <string name="information">Information</string>
+    <string name="welcome_title">Welcome To Acountables!</string>
+    <string name="use_interface">- Use interface below to create events that you can keep count of the number of times you have done them (hereafter called "Countables")</string>
+    <string name="on_countable_screen">- On this screen you can also delete (via swiping away Countable rows), sort (via the menu icon) and reorder Countables (via the green drag and drop indicator at the beginning of the row)</string>
+    <string name="interact_countable">- To interact with and change a Countable simply click on it</string>
+
+    <!--Credits Dialog Strings-->
+    <string name="credits">Credits</string>
+    <string name="butterknife">- Butter Knife</string>
+    <string name="joda_time">- Joda-Time</string>
+    <string name="rx_java">- RxJava</string>
+    <string name="realm">- Realm</string>
+    <string name="picasso">- Picasso</string>
+    <string name="material_design_icons">- materialdesignicons.com</string>
+
+    <!--View Strings-->
     <string name="add_countable_hint">Create a Countable...</string>
+
+    <!--Error Strings-->
+    <string name="general_error">An unexpected error occurred. Please try the previous action again.</string>
+    <string name="dialog_error">A dialog error occurred. Please try the previous action again.</string>
+    <string name="view_error">An error occurred on the view. Please try the previous action again.</string>
 </resources>

@@ -6,10 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="group.g203.acountables.base.behavior.SlideUpBehavior"
-    tools:context="group.g203.acountables.path.main.MainActivity"
+    tools:context="group.g203.acountables.path.main.view.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <group.g203.acountables.base.custom_view.LoadingAspect
+    <group.g203.acountables.custom_view.loading_view.LoadingAspect
+        android:id="@+id/loading_aspect"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -19,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </group.g203.acountables.base.custom_view.LoadingAspect>
+    </group.g203.acountables.custom_view.loading_view.LoadingAspect>
 
     <LinearLayout
         android:layout_width="match_parent"
