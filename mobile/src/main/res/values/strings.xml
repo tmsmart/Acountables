@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Acountables</string>
+    <string name="app_name">Countables</string>
 
     <!--General Strings-->
     <string name="ok">Ok</string>
@@ -22,8 +22,8 @@
 
     <!--Info Dialog Strings-->
     <string name="information">Information</string>
-    <string name="welcome_title">Welcome To Acountables!</string>
-    <string name="use_interface">- Use interface below to create events that you can keep count of the number of times you have done them (hereafter called "Countables")</string>
+    <string name="welcome_title">Welcome To Countables!</string>
+    <string name="use_interface">- Use interface below to create events that you can keep count of the number of times you have done them (hereafter called Countables)</string>
     <string name="on_countable_screen">- On this screen you can also delete (via swiping away Countable rows), sort (via the menu icon) and reorder Countables (via the green drag and drop indicator at the beginning of the row)</string>
     <string name="interact_countable">- To interact with and change a Countable simply click on it</string>
 
