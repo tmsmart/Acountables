@@ -37,8 +37,12 @@
     <string name="picasso">- Picasso</string>
     <string name="material_design_icons">- materialdesignicons.com</string>
 
-    <!--View Strings-->
+    <!--Main and Detail View Strings-->
     <string name="add_countable_hint">Create a Countable...</string>
+    <string name="completed_count">Completed Count:</string>
+    <string name="time_log">Time Log</string>
+    <string name="accountability">Accountability</string>
+    <string name="reminder">Reminder</string>
 
     <!--Error Strings-->
     <string name="general_error">An unexpected error occurred. Please try the previous action again.</string>
