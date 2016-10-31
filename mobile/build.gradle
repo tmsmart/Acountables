@@ -1,10 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.3"
     defaultConfig {
-        applicationId "group.g203.myapplication"
+        applicationId "group.g203.countables"
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
@@ -25,8 +26,13 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     wearApp project(':wear')
-    compile 'com.google.android.gms:play-services:9.6.1'
     compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:cardview-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
+
+    compile group: 'com.jakewharton', name: 'butterknife', version: '7.0.1'
+    compile group: 'joda-time', name: 'joda-time', version: '2.9.4'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
     testCompile 'junit:junit:4.12'
 }

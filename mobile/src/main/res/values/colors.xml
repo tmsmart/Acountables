@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+
+    <!--Prime App Colors-->
+    <color name="app_green">#3D8B37</color>
+    <color name="bright_app_green">#4CBB17</color>
+    <color name="dark_app_green">#488214</color>
+    <color name="darkest_app_green">#215E21</color>
+    <color name="bright_faded_app_green">#334CBB17</color>
+
+    <!-- Accent App Colors-->
+    <color name="app_gray">#9E9E9E</color>
+    <color name="app_bg_gray">#EEEEEE</color>
+    <color name="fallback_gray">#E0E0E0</color>
+    <color name="dark_app_gray">#616161</color>
+
 </resources>
