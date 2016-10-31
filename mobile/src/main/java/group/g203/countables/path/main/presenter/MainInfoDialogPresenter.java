@@ -1,13 +1,15 @@
 package group.g203.countables.path.main.presenter;
 
+import android.support.v7.app.AlertDialog;
+
 import group.g203.countables.base.presenter.GeneralPresenter;
 
 public interface MainInfoDialogPresenter extends GeneralPresenter {
 
-    void setInfoDialogTitle(String title);
+    void setInfoDialogTitle(AlertDialog.Builder builder,  String title);
 
-    void setInfoDialogPositiveButton(String buttonText);
+    void setInfoDialogPositiveButton(AlertDialog.Builder builder, String buttonText);
 
-    void setInfoDialogMessage(String message);
+    void setInfoDialogMessage(AlertDialog.Builder builder, String message);
 
 }

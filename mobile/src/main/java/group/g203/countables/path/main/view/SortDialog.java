@@ -16,33 +16,34 @@ public class SortDialog extends BaseDialog implements BaseDialogView {
     SortDialogPresenter mPresenter;
 
     public static SortDialog getInstance() {
-        return new SortDialog();
+        SortDialog dialog = new SortDialog();
+        dialog.dialogTag = TAG;
+        return dialog;
     }
 
     @Override
     public AlertDialog onCreateDialog(Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
         setPresenterFromActivity();
-        onSetTitle(getString(R.string.sort_title));
+        onSetTitle(builder, getString(R.string.sort_title));
         onSetSortDialogItems(R.array.sort_options);
-        this.dialogTag = TAG;
         final AlertDialog sortDialog = builder.create();
         return sortDialog;
     }
 
     @Override
-    public void setPositiveButton(String buttonText) {
+    public void setPositiveButton(AlertDialog.Builder builder, String buttonText) {
 
     }
 
     @Override
-    public void setNegativeButton(String buttonText) {
+    public void setNegativeButton(AlertDialog.Builder builder, String buttonText) {
 
     }
 
     @Override
-    public void onSetTitle(String title) {
-        mPresenter.setSortDialogTitle(title);
+    public void onSetTitle(AlertDialog.Builder builder, String title) {
+        mPresenter.setSortDialogTitle(builder, title);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class SortDialog extends BaseDialog implements BaseDialogView {
     }
 
     public void onSetSortDialogItems(int arrayResource) {
-        mPresenter.setSortDialogItems(arrayResource);
+        mPresenter.setSortDialogItems(this, builder, arrayResource);
     }
 
     @Override

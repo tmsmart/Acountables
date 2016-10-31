@@ -16,9 +16,11 @@
         <item>Z - A</item>
         <item>Most Recently Updated</item>
         <item>Least Recently Updated</item>
-        <item>Completed most</item>
-        <item>Completed least</item>
+        <item>Completed Most</item>
+        <item>Completed Least</item>
     </string-array>
+    <string name="sorted_prefix">Countables sorted by:</string>
+    <string name="nothing_to_sort">No Countables to sort</string>
 
     <!--Info Dialog Strings-->
     <string name="information">Information</string>
@@ -31,7 +33,6 @@
     <string name="credits">Credits</string>
     <string name="butterknife">- Butter Knife</string>
     <string name="joda_time">- Joda-Time</string>
-    <string name="rx_java">- RxJava</string>
     <string name="realm">- Realm</string>
     <string name="picasso">- Picasso</string>
     <string name="material_design_icons">- materialdesignicons.com</string>
@@ -43,4 +44,6 @@
     <string name="general_error">An unexpected error occurred. Please try the previous action again.</string>
     <string name="dialog_error">A dialog error occurred. Please try the previous action again.</string>
     <string name="view_error">An error occurred on the view. Please try the previous action again.</string>
+    <string name="countables_error">An error occurred fetching your Countables. Please close the app and try again.</string>
+    <string name="countables_sort_error">An error occurred sorting your Countables. Please close the app and try again.</string>
 </resources>

@@ -32,7 +32,6 @@ dependencies {
 
     compile group: 'com.jakewharton', name: 'butterknife', version: '7.0.1'
     compile group: 'joda-time', name: 'joda-time', version: '2.9.4'
-    compile 'io.reactivex.rxjava2:rxjava:2.0.0-RC4'
     compile 'com.squareup.picasso:picasso:2.5.2'
 
     testCompile 'junit:junit:4.12'

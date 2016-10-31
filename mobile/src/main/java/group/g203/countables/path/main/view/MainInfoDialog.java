@@ -16,15 +16,17 @@ public class MainInfoDialog extends BaseDialog {
     MainInfoDialogPresenter mPresenter;
 
     public static MainInfoDialog getInstance() {
-        return new MainInfoDialog();
+        MainInfoDialog dialog = new MainInfoDialog();
+        dialog.dialogTag = TAG;
+        return dialog;
     }
 
     @Override
     public AlertDialog onCreateDialog(Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
         setPresenterFromActivity();
-        onSetTitle(getString(R.string.welcome_title));
-        setPositiveButton(getString(R.string.got_it));
+        onSetTitle(builder, getString(R.string.welcome_title));
+        setPositiveButton(builder, getString(R.string.got_it));
         onSetDialogMessage(getString(R.string.use_interface) + Constants.NEWLINE
                 + Constants.NEWLINE + getString(R.string.on_countable_screen) + Constants.NEWLINE
                 + Constants.NEWLINE + getString(R.string.interact_countable));
@@ -34,21 +36,21 @@ public class MainInfoDialog extends BaseDialog {
     }
 
     @Override
-    public void setPositiveButton(String buttonText) {
-        mPresenter.setInfoDialogPositiveButton(buttonText);
+    public void setPositiveButton(AlertDialog.Builder builder, String buttonText) {
+        mPresenter.setInfoDialogPositiveButton(builder, buttonText);
     }
 
     @Override
-    public void setNegativeButton(String buttonText) {
+    public void setNegativeButton(AlertDialog.Builder builder, String buttonText) {
     }
 
     @Override
-    public void onSetTitle(String title) {
-        mPresenter.setInfoDialogTitle(title);
+    public void onSetTitle(AlertDialog.Builder builder, String title) {
+
     }
 
     public void onSetDialogMessage(String msg) {
-        mPresenter.setInfoDialogMessage(msg);
+        mPresenter.setInfoDialogMessage(builder, msg);
     }
 
     @Override

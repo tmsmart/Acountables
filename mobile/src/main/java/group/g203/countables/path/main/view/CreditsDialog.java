@@ -17,7 +17,9 @@ public class CreditsDialog extends BaseDialog {
     CreditsDialogPresenter mPresenter;
 
     public static CreditsDialog getInstance() {
-       return new CreditsDialog();
+        CreditsDialog dialog = new CreditsDialog();
+        dialog.dialogTag = TAG;
+        return dialog;
     }
 
     @Override
@@ -27,25 +29,24 @@ public class CreditsDialog extends BaseDialog {
         View view = inflater.inflate(R.layout.credits_dialog_layout, null);
         builder.setView(view);
         setPresenterFromActivity();
-        onSetTitle(getString(R.string.credits));
-        setPositiveButton(getString(R.string.ok));
-        this.dialogTag = TAG;
+        onSetTitle(builder, getString(R.string.credits));
+        setPositiveButton(builder, getString(R.string.ok));
         final AlertDialog creditsDialog = builder.create();
         return creditsDialog;
     }
 
     @Override
-    public void setPositiveButton(String buttonText) {
-        mPresenter.setCreditsDialogPositiveButton(buttonText);
+    public void setPositiveButton(AlertDialog.Builder builder, String buttonText) {
+        mPresenter.setCreditsDialogPositiveButton(builder, buttonText);
     }
 
     @Override
-    public void setNegativeButton(String buttonText) {
+    public void setNegativeButton(AlertDialog.Builder builder, String buttonText) {
     }
 
     @Override
-    public void onSetTitle(String title) {
-        mPresenter.setCreditsDialogTitle(title);
+    public void onSetTitle(AlertDialog.Builder builder, String title) {
+
     }
 
     @Override

@@ -5,11 +5,13 @@ import java.util.Collections;
 
 public class CollectionUtils {
 
-    public static boolean isEmpty(Collection collection) {
+    public static boolean isEmpty(Collection collection, boolean isRealm) {
         if (collection == null || collection.isEmpty()) {
             return true;
         } else {
-            collection.removeAll(Collections.singleton(null));
+            if (!isRealm) {
+                collection.removeAll(Collections.singleton(null));
+            }
             return (collection == null || collection.isEmpty());
         }
     }

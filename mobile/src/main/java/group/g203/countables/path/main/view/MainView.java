@@ -5,19 +5,7 @@ import group.g203.countables.base.view.BaseView;
 
 public interface MainView extends BaseView {
 
-    void displayEmptyView();
-
-    void displayLoading();
-
-    void finishLoading();
-
-    void displayCountables();
-
-    void addCountable();
-
-    void deleteCountable();
-
-    void undoCountableDelete();
+    void handleContentDisplay();
 
     void displayInfoDialog();
 
@@ -25,9 +13,4 @@ public interface MainView extends BaseView {
 
     void displayCreditsDialog();
 
-    void enableAddButton();
-
-    void disableAddButton();
-
-    void resetAddCountableView();
 }

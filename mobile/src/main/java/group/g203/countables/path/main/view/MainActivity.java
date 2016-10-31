@@ -3,22 +3,20 @@ package group.g203.countables.path.main.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import java.util.List;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import group.g203.countables.R;
-import group.g203.countables.base.manager.BaseDialogManager;
 import group.g203.countables.base.manager.BasePresenterManager;
 import group.g203.countables.base.presenter.BasePresenter;
-import group.g203.countables.base.utils.CollectionUtils;
-import group.g203.countables.base.view.BaseDialog;
 import group.g203.countables.custom_view.loading_view.LoadingAspect;
 import group.g203.countables.path.main.presenter.MainPresenter;
 
@@ -26,6 +24,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @Bind(R.id.loading_aspect)
     public LoadingAspect mLoadingAspect;
+    @Bind(R.id.rvCountables)
+    public RecyclerView mCountablesRv;
+    @Bind(R.id.etCountable)
+    public EditText mCountableField;
+    @Bind(R.id.ivAddCountable)
+    public ImageView mAddCountable;
+    public View mView;
     MainPresenter mPresenter;
 
     @Override
@@ -33,21 +38,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
         super.onCreate(savedInstanceState);
         LayoutInflater inflater = (LayoutInflater) this
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View contentView = inflater.inflate(R.layout.activity_main, null, false);
-        setContentView(contentView);
+        mView = inflater.inflate(R.layout.activity_main, null, false);
+        setContentView(mView);
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if (savedInstanceState == null) {
-            setPresenter(new MainPresenter());
-        } else {
-            setPresenter(BasePresenterManager.getInstance().getPresenter(savedInstanceState));
-            List<String> visibleDialogTags = BaseDialogManager.getInstance().getVisibleDialogTags(savedInstanceState);
-            if (!CollectionUtils.isEmpty(visibleDialogTags)) {
-                mPresenter.displayDialogsAfterStateChange(visibleDialogTags, getSupportFragmentManager());
-            }
-        }
+        setPresenter(new MainPresenter());
         setEmptyParams();
+        handleContentDisplay();
     }
 
     @Override
@@ -70,37 +68,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void displayEmptyView() {
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
-    public void displayLoading() {
-
-    }
-
-    @Override
-    public void finishLoading() {
-
-    }
-
-    @Override
-    public void displayCountables() {
-
-    }
-
-    @Override
-    public void addCountable() {
-
-    }
-
-    @Override
-    public void deleteCountable() {
-
-    }
-
-    @Override
-    public void undoCountableDelete() {
-
+    public void handleContentDisplay() {
+        mPresenter.handleInitialContentDisplay();
     }
 
     @Override
@@ -119,27 +93,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void enableAddButton() {
-
-    }
-
-    @Override
-    public void disableAddButton() {
-
-    }
-
-    @Override
-    public void resetAddCountableView() {
-
-    }
-
-    @Override
     public <P extends BasePresenter> void setPresenter(P presenter) {
         if (presenter instanceof MainPresenter) {
             mPresenter = (MainPresenter) presenter;
             mPresenter.bindViews(this, mLoadingAspect);
         } else {
-            mPresenter.displayError(getString(R.string.general_error));
+            mPresenter.displaySnackbarMessage(getString(R.string.general_error));
         }
     }
 
@@ -151,13 +110,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         BasePresenterManager.getInstance().savePresenter(mPresenter, outState);
-
-        List<BaseDialog> dialogs = (List<BaseDialog>)(List<?>) getSupportFragmentManager().getFragments();
-        if (!CollectionUtils.isEmpty(dialogs)) {
-            BaseDialogManager.getInstance().saveVisibleDialogTags(dialogs, outState);
-            BaseDialogManager.removeFromFragmentManager(dialogs, getSupportFragmentManager());
-        }
-
         super.onSaveInstanceState(outState);
     }
 

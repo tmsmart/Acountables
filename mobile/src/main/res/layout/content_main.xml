@@ -1,58 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="group.g203.countables.base.behavior.SlideUpBehavior"
+    android:paddingTop="?android:attr/actionBarSize"
     tools:context="group.g203.countables.path.main.view.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <group.g203.countables.custom_view.loading_view.LoadingAspect
-        android:id="@+id/loading_aspect"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvCountables"
+        <group.g203.countables.custom_view.loading_view.LoadingAspect
+            android:id="@+id/loading_aspect"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </group.g203.countables.custom_view.loading_view.LoadingAspect>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:elevation="48dp"
-        android:background="@drawable/gray_border"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-        <EditText
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:paddingLeft="8dp"
-            android:paddingStart="8dp"
-            android:paddingRight="4dp"
-            android:paddingEnd="4dp"
-            android:layout_gravity="center_vertical"
-            android:background="@android:color/transparent"
-            android:hint="@string/add_countable_hint"
-            android:textColorHint="@color/fallback_gray"/>
-
-        <ImageView
-            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/disabled_add_countable_border"
-            android:tint="@android:color/white"
-            android:src="@mipmap/ic_plus"/>
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvCountables"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="48dp" />
+
+        </group.g203.countables.custom_view.loading_view.LoadingAspect>
+
+        <LinearLayout
+            android:id="@+id/llAddCountable"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/gray_border"
+            android:elevation="48dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etCountable"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="3"
+                android:background="@android:color/transparent"
+                android:hint="@string/add_countable_hint"
+                android:paddingEnd="4dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="4dp"
+                android:paddingStart="8dp"
+                android:textColorHint="@color/fallback_gray" />
+
+            <ImageView
+                android:id="@+id/ivAddCountable"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/disabled_add_countable_border"
+                android:src="@mipmap/ic_plus"
+                android:tint="@android:color/white" />
+
+        </LinearLayout>
 
 </RelativeLayout>
