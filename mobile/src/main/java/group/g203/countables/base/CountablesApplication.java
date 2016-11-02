@@ -20,7 +20,7 @@ public class CountablesApplication extends Application {
         RealmConfiguration config = new RealmConfiguration.Builder().build();
         Realm.deleteRealm(config);
         Realm.setDefaultConfiguration(config);
-        //createTestData();
+        createTestData();
     }
 
     private void createTestData() {

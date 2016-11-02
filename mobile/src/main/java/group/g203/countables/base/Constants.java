@@ -10,5 +10,20 @@ public class Constants {
 
     public static final String SPACE = " ";
 
-    public static final String SAVED_STATE = "savedState";
+    public static final String EMPTY_STRING = "";
+
+    public static final String COUNTABLE_INDEX = "countableIndex";
+
+    public static final String INFO_TYPE = "infoType";
+
+    public static final String MAIN_INFO = "mainInfo";
+
+    public static final String DETAIL_INFO = "detailInfo";
+
+    public static final String DIALOG_TAG = "dialogTag";
+
+    public static final String COUNTABLE_NAME = "countableName";
+
+    public static final String COUNTABLE_COUNT = "countableCount";
+
 }

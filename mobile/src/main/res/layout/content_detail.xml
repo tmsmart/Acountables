@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context="group.g203.countables.DetailActivity">
+    tools:context="group.g203.countables.path.detail.view.DetailActivity">
 
     <RelativeLayout
         android:id="@+id/llCountableInfo"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="68dp"
         android:background="@drawable/bright_green_border"
         android:layout_marginTop="?android:attr/actionBarSize"
         android:elevation="8dp"
@@ -23,7 +22,10 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingTop="4dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:textStyle="bold"
+            android:textSize="18sp"
             android:ellipsize="end"
             android:maxLines="2" />
 
@@ -35,7 +37,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:gravity="center_vertical"
-            android:textSize="12dp"
+            android:textSize="16sp"
             android:text="@string/completed_count" />
 
     </RelativeLayout>

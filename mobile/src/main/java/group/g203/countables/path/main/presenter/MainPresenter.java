@@ -38,8 +38,8 @@ import group.g203.countables.model.DateField;
 import group.g203.countables.model.TempCountable;
 import group.g203.countables.path.main.view.CountableAdapter;
 import group.g203.countables.path.main.view.CreditsDialog;
+import group.g203.countables.path.main.view.InfoDialog;
 import group.g203.countables.path.main.view.MainActivity;
-import group.g203.countables.path.main.view.MainInfoDialog;
 import group.g203.countables.path.main.view.MainView;
 import group.g203.countables.path.main.view.SortDialog;
 import io.realm.OrderedRealmCollection;
@@ -48,7 +48,7 @@ import io.realm.RealmList;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
-public class MainPresenter implements BasePresenter, CreditsDialogPresenter, MainInfoDialogPresenter,
+public class MainPresenter implements BasePresenter, CreditsDialogPresenter, InfoDialogPresenter,
         SortDialogPresenter, LoadingPresenter, CountableViewHolderPresenter, OnStartDragListener {
 
     private final static String NAME = "name";
@@ -79,7 +79,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Mai
     RecyclerView mCountablesRv;
     CountableAdapter mAdapter;
     ItemTouchHelper mTouchHelper;
-    MainInfoDialog mInfoDialog;
+    InfoDialog mInfoDialog;
     CreditsDialog mCreditsDialog;
     SortDialog mSortDialog;
     EditText mCountableField;
@@ -305,13 +305,13 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Mai
     }
 
     public void displayCreditsDialog(FragmentManager fm) {
-        mCreditsDialog = CreditsDialog.getInstance();
-        BaseDialogManager.displayFragmentDialog(mCreditsDialog, fm);
+        mCreditsDialog = CreditsDialog.getInstance(CreditsDialog.TAG);
+        BaseDialogManager.displayFragmentDialog(mCreditsDialog, CreditsDialog.TAG, fm);
     }
 
     public void displayInfoDialog(FragmentManager fm) {
-        mInfoDialog = MainInfoDialog.getInstance();
-        BaseDialogManager.displayFragmentDialog(mInfoDialog, fm);
+        mInfoDialog = InfoDialog.getInstance(InfoDialog.TAG, Constants.MAIN_INFO);
+        BaseDialogManager.displayFragmentDialog(mInfoDialog, InfoDialog.TAG, fm);
     }
 
     public void displaySortDialog(FragmentManager fm) {
@@ -319,8 +319,8 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Mai
                 mLoadingAspect.mEmptyMessage.getVisibility() == View.VISIBLE) {
             displayToast(mContext.getString(R.string.nothing_to_sort));
         } else {
-            mSortDialog = SortDialog.getInstance();
-            BaseDialogManager.displayFragmentDialog(mSortDialog, fm);
+            mSortDialog = SortDialog.getInstance(SortDialog.TAG);
+            BaseDialogManager.displayFragmentDialog(mSortDialog, SortDialog.TAG, fm);
         }
     }
 
@@ -369,7 +369,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Mai
         });
     }
 
-    void assignCountableIndices(List<Countable> countables) {
+    public static void assignCountableIndices(List<Countable> countables) {
         int index = 0;
         for (Countable countable : countables) {
             countable.index = index;
@@ -450,7 +450,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Mai
                     RealmResults<Countable> countables = realm.where(Countable.class).findAll();
                     addedCountable.index = countables.size() - 1;
 
-                    mCountableField.setText("");
+                    mCountableField.setText(Constants.EMPTY_STRING);
                     mCountableField.clearFocus();
 
                     mAdapter.setData(countables);

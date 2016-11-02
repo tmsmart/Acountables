@@ -4,7 +4,7 @@ import android.support.v7.app.AlertDialog;
 
 import group.g203.countables.base.presenter.GeneralPresenter;
 
-public interface MainInfoDialogPresenter extends GeneralPresenter {
+public interface InfoDialogPresenter extends GeneralPresenter {
 
     void setInfoDialogTitle(AlertDialog.Builder builder,  String title);
 

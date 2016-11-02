@@ -1,5 +1,6 @@
 package group.g203.countables.path.main.view;
 
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -9,9 +10,11 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import group.g203.countables.R;
+import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.view.BaseView;
 import group.g203.countables.base.view.ItemTouchHelperViewHolder;
+import group.g203.countables.path.detail.view.DetailActivity;
 import group.g203.countables.path.main.presenter.CountableViewHolderPresenter;
 
 public class CountableViewHolder extends RecyclerView.ViewHolder implements BaseView, ItemTouchHelperViewHolder {
@@ -30,9 +33,20 @@ public class CountableViewHolder extends RecyclerView.ViewHolder implements Base
     public ImageView ivReminder;
     CountableViewHolderPresenter mPresenter;
 
-    public CountableViewHolder(View itemView) {
+    public CountableViewHolder(final View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(itemView.getContext(), DetailActivity.class);
+                int countableIndex = getAdapterPosition();
+                intent.putExtra(Constants.COUNTABLE_INDEX, countableIndex);
+                intent.putExtra(Constants.COUNTABLE_NAME, tvTitle.getText().toString());
+                intent.putExtra(Constants.COUNTABLE_COUNT, tvCompletedCount.getText().toString());
+                itemView.getContext().startActivity(intent);
+            }
+        });
     }
 
     @Override
