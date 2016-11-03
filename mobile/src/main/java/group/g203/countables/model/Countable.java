@@ -12,8 +12,10 @@ public class Countable extends RealmObject {
     public RealmList<DateField> loggedDates;
     public int timesCompleted;
     public Date lastModified;
-    public Date accountableStartDate;
     public boolean isAccountable;
+    public RealmList<DateField> accountableDates;
     public boolean isReminderEnabled;
+    public RealmList<DateField> anchorDates;
+    public int dayRepeater;
 
 }

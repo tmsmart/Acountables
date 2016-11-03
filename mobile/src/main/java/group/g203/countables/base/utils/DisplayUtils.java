@@ -14,20 +14,28 @@ public class DisplayUtils {
         Toast.makeText(context, msg, displayDuration).show();
     }
 
+    public static Snackbar simpleSnackbar(View view, String msg, int displayDuration, Snackbar.Callback callback) {
+        return Snackbar.make(view, msg, displayDuration).setCallback(callback);
+    }
+
+    public static Snackbar actionSnackbar(View view, String msg,
+                                          String actionText, int displayDuration,
+                                          View.OnClickListener listener,
+                                          Snackbar.Callback callback) {
+        return Snackbar.make(view, msg, displayDuration)
+                .setAction(actionText, listener)
+                .setActionTextColor(ContextCompat.getColor(view.getContext(), R.color.bright_app_green))
+                .setCallback(callback);
+    }
+
     public static void displaySimpleSnackbar(View view, String msg, int displayDuration, Snackbar.Callback callback) {
-        Snackbar.make(view, msg, displayDuration)
-                .setCallback(callback)
-                .show();
+        simpleSnackbar(view, msg, displayDuration, callback).show();
     }
 
     public static void displayActionSnackbar(View view, String msg,
                                              String actionText, int displayDuration,
                                              View.OnClickListener listener,
                                              Snackbar.Callback callback) {
-        Snackbar.make(view, msg, displayDuration)
-                .setAction(actionText, listener)
-                .setActionTextColor(ContextCompat.getColor(view.getContext(), R.color.bright_app_green))
-                .setCallback(callback)
-                .show();
+        actionSnackbar(view, msg, actionText, displayDuration, listener, callback).show();
     }
 }

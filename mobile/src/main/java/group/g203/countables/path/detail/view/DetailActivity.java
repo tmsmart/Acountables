@@ -185,11 +185,6 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
         mPresenter.renameCountable(dialog.mCountableName.getText().toString());
     }
 
-    public void setEmptyParams() {
-        mPresenter.setEmptyIcon(R.mipmap.ic_clock);
-        mPresenter.setEmptyMessage(getString(R.string.never_completed));
-    }
-
     @Override
     public void onEditCompleteCount(String count) {
         mPresenter.setCompletedCount(count);

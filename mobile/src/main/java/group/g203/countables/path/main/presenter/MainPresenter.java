@@ -13,6 +13,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +30,7 @@ import group.g203.countables.base.Constants;
 import group.g203.countables.base.manager.BaseDialogManager;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.utils.CalendarUtils;
+import group.g203.countables.base.utils.CollectionUtils;
 import group.g203.countables.base.utils.DisplayUtils;
 import group.g203.countables.base.view.BaseView;
 import group.g203.countables.base.view.ItemTouchHelperCallback;
@@ -75,7 +78,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     Realm mRealm;
     MainView mMainView;
     View mView;
-    CoordinatorLayout mSnack;
+    CoordinatorLayout mSnackLayout;
     LoadingAspect mLoadingAspect;
     RecyclerView mCountablesRv;
     CountableAdapter mAdapter;
@@ -86,6 +89,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     EditText mCountableField;
     ImageView mAddCountable;
     Context mContext;
+    Snackbar mSnackbar;
 
     @Override
     public void bindModels() {
@@ -102,7 +106,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         mMainView = (MainView) views[0];
         mView = ((MainActivity) mMainView).mView;
 
-        mSnack = ((MainActivity) mMainView).clSnack;
+        mSnackLayout = ((MainActivity) mMainView).clSnack;
 
         mLoadingAspect = ((MainActivity) mMainView).mLoadingAspect;
         mLoadingAspect.setPresenter(((MainActivity) mMainView).getPresenter());
@@ -112,7 +116,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
 
         mAddCountable = ((MainActivity) mMainView).mAddCountable;
         mCountableField = ((MainActivity) mMainView).mCountableField;
-        assignCountableTextWatcher();
+        assignCountableTextListeners();
     }
 
     @Override
@@ -128,7 +132,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
 
     @Override
     public void displaySnackbarMessage(String message) {
-        DisplayUtils.displaySimpleSnackbar(mSnack, message, Snackbar.LENGTH_SHORT, null);
+        DisplayUtils.displaySimpleSnackbar(mSnackLayout, message, Snackbar.LENGTH_SHORT, null);
     }
 
     @Override
@@ -387,7 +391,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         return mRealm;
     }
 
-    void assignCountableTextWatcher() {
+    void assignCountableTextListeners() {
         mCountableField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -406,11 +410,20 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() > MAX_COUNTABLE_NAME_CHARS) {
-                    displaySnackbarMessage(MAX_NAME_PREFIX + MAX_COUNTABLE_NAME_CHARS + MAX_NAME_SUFFIX);
+                    setAndShowMainSnackbar(null, null, MAX_NAME_PREFIX + MAX_COUNTABLE_NAME_CHARS + MAX_NAME_SUFFIX);
                     int maxLength = (mCountableField.getText().toString().length() > MAX_COUNTABLE_NAME_CHARS) ? MAX_COUNTABLE_NAME_CHARS : mCountableField.getText().toString().length();
                     String maxString = mCountableField.getText().toString().substring(0, maxLength - 1);
                     mCountableField.setText(maxString);
                     mCountableField.setSelection(mCountableField.getText().length());
+                }
+            }
+        });
+
+        mCountableField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus){
+                    dismissMainSnackbar();
                 }
             }
         });
@@ -422,6 +435,9 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
             mAddCountable.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mCountableField.clearFocus();
+                    InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mCountableField.getWindowToken(), 0);
                     createCountable();
                 }
             });
@@ -434,9 +450,9 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     void createCountable() {
         final String countableName = mCountableField.getText().toString();
         if (countableName.trim().isEmpty()) {
-            displaySnackbarMessage(NAME_MUST_BE_NONEMPTY);
+            setAndShowMainSnackbar(null, null, NAME_MUST_BE_NONEMPTY);
         } else if (countableName.length() > MAX_COUNTABLE_NAME_CHARS) {
-            displaySnackbarMessage(MAX_NAME_PREFIX + MAX_COUNTABLE_NAME_CHARS + MAX_NAME_SUFFIX);
+            setAndShowMainSnackbar(null, null, MAX_NAME_PREFIX + MAX_COUNTABLE_NAME_CHARS + MAX_NAME_SUFFIX);
         } else {
             displayLoading();
             getRealmInstance().executeTransaction(new Realm.Transaction() {
@@ -446,7 +462,11 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     addedCountable.name = countableName;
                     addedCountable.isAccountable = false;
                     addedCountable.isReminderEnabled = false;
+                    addedCountable.timesCompleted = 0;
+                    addedCountable.dayRepeater = 0;
                     addedCountable.loggedDates = null;
+                    addedCountable.accountableDates = null;
+                    addedCountable.anchorDates = null;
                     addedCountable.lastModified = null;
 
                     RealmResults<Countable> countables = realm.where(Countable.class).findAll();
@@ -461,13 +481,12 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     displayContent();
                     mCountablesRv.smoothScrollToPosition(addedCountable.index);
 
-                    DisplayUtils.displayActionSnackbar(mSnack, COUNTABLE_CREATED, Constants.UNDO, Snackbar.LENGTH_LONG,
-                            new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    revertCountableCreation(addedCountable);
-                                }
-                            }, null);
+                    setAndShowMainSnackbar(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            revertCountableCreation(addedCountable);
+                        }
+                    }, null, COUNTABLE_CREATED, Constants.UNDO);
                 }
             });
         }
@@ -492,7 +511,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     displayEmptyView();
                 }
 
-                displaySnackbarMessage(COUNTABLE_CREATE_REVERTED);
+                setAndShowMainSnackbar(null, null, COUNTABLE_CREATE_REVERTED);
             }
         });
     }
@@ -507,51 +526,47 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         }
         getRealmInstance().commitTransaction();
 
-        DisplayUtils.displayActionSnackbar(mSnack, COUNTABLE_DELETED, Constants.UNDO, Snackbar.LENGTH_LONG,
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        setAndShowMainSnackbar(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                    }
-                }, new Snackbar.Callback() {
-                    @Override
-                    public void onDismissed(Snackbar snackbar, int event) {
-                        if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
-                            getRealmInstance().beginTransaction();
-                            assignCountableIndices(getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING));
-                            getRealmInstance().commitTransaction();
-                        } else {
-                            displayLoading();
+            }
+        }, new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
+                    getRealmInstance().beginTransaction();
+                    assignCountableIndices(getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING));
+                    getRealmInstance().commitTransaction();
+                } else {
+                    displayLoading();
 
-                            getRealmInstance().beginTransaction();
-                            RealmList<DateField> dates = new RealmList<>();
-                            for (Date date : tempCountable.loggedDates) {
-                                DateField dateField = getRealmInstance().createObject(DateField.class);
-                                dateField.date = date;
-                                dates.add(dateField);
-                                getRealmInstance().copyToRealm(dateField);
-                            }
+                    getRealmInstance().beginTransaction();
 
-                            Countable countable = getRealmInstance().createObject(Countable.class);
-                            countable.name = tempCountable.name;
-                            countable.index = tempCountable.index;
-                            countable.isAccountable = tempCountable.isAccountable;
-                            countable.isReminderEnabled = tempCountable.isReminderEnabled;
-                            countable.loggedDates = dates;
-                            countable.lastModified = tempCountable.lastModified;
+                    Countable countable = getRealmInstance().createObject(Countable.class);
+                    countable.name = tempCountable.name;
+                    countable.index = tempCountable.index;
+                    countable.loggedDates = arrayListToDateRealmList(tempCountable.loggedDates, new RealmList<DateField>());
+                    countable.accountableDates = arrayListToDateRealmList(tempCountable.accountableDates, new RealmList<DateField>());
+                    countable.anchorDates = arrayListToDateRealmList(tempCountable.anchorDates, new RealmList<DateField>());
+                    countable.isAccountable = tempCountable.isAccountable;
+                    countable.isReminderEnabled = tempCountable.isReminderEnabled;
+                    countable.lastModified = tempCountable.lastModified;
+                    countable.timesCompleted = tempCountable.timesCompleted;
+                    countable.dayRepeater = tempCountable.dayRepeater;
 
-                            RealmResults<Countable> countables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
-                            getRealmInstance().commitTransaction();
+                    RealmResults<Countable> countables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
+                    getRealmInstance().commitTransaction();
 
-                            mAdapter.setData(countables);
-                            mAdapter.notifyDataSetChanged();
+                    mAdapter.setData(countables);
+                    mAdapter.notifyDataSetChanged();
 
-                            mCountablesRv.smoothScrollToPosition(countable.index);
-                            displaySnackbarMessage(COUNTABLE_DELETE_REVERTED);
-                            displayContent();
-                        }
-                    }
-                });
+                    mCountablesRv.smoothScrollToPosition(countable.index);
+                    setAndShowMainSnackbar(null, null, COUNTABLE_DELETE_REVERTED);
+                    displayContent();
+                }
+            }
+        }, COUNTABLE_DELETED, Constants.UNDO);
     }
 
     public void reorderCountablesViaDrag(final Countable countable, final int fromPosition,
@@ -573,5 +588,37 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                 mAdapter.setData(countables);
             }
         });
+    }
+
+    RealmList<DateField> arrayListToDateRealmList(ArrayList<Date> dates, RealmList<DateField> dateFields) {
+        if (CollectionUtils.isEmpty(dates, false)) {
+            return null;
+        } else {
+            for (Date date : dates) {
+                DateField dateField = getRealmInstance().createObject(DateField.class);
+                dateField.date = date;
+                dateFields.add(dateField);
+                getRealmInstance().copyToRealm(dateField);
+            }
+            return dateFields;
+        }
+    }
+
+    void setAndShowMainSnackbar(View.OnClickListener listener, Snackbar.Callback callback, String... snackbarStrings) {
+        if (snackbarStrings.length == 1) {
+            mSnackbar = DisplayUtils.simpleSnackbar(mSnackLayout, snackbarStrings[0],
+                    Snackbar.LENGTH_SHORT, null);
+            mSnackbar.show();
+        } else if (snackbarStrings.length == 2) {
+            mSnackbar = DisplayUtils.actionSnackbar(mSnackLayout, snackbarStrings[0], snackbarStrings[1], Snackbar.LENGTH_LONG,
+                    listener, callback);
+            mSnackbar.show();
+        }
+    }
+
+    void dismissMainSnackbar() {
+        if (mSnackbar != null) {
+            mSnackbar.dismiss();
+        }
     }
 }

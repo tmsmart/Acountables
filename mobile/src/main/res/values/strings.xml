@@ -64,6 +64,13 @@
     <string name="accountability">Accountability</string>
     <string name="reminder">Reminder</string>
 
+   <!--Accountability/Reminder Strings-->
+    <string name="enable_accountable">Enable Accountability Schedule</string>
+    <string name="enable_reminder">Set Reminder</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="custom">Custom</string>
+
     <!--Error Strings-->
     <string name="general_error">An unexpected error occurred. Please try the previous action again.</string>
     <string name="dialog_error">A dialog error occurred. Please try the previous action again.</string>
