@@ -13,4 +13,10 @@ public class CalendarUtils {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("MM/dd/yy");
         return formatter.print(dateTime);
     }
+
+    public static String returnEnglishFormat(Date date) {
+        DateTime dateTime = new DateTime(date);
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("EE, MMM dd, yyyy  -  hh:mm a");
+        return formatter.print(dateTime);
+    }
 }

@@ -42,8 +42,6 @@ public class CountableViewHolder extends RecyclerView.ViewHolder implements Base
                 Intent intent = new Intent(itemView.getContext(), DetailActivity.class);
                 int countableIndex = getAdapterPosition();
                 intent.putExtra(Constants.COUNTABLE_INDEX, countableIndex);
-                intent.putExtra(Constants.COUNTABLE_NAME, tvTitle.getText().toString());
-                intent.putExtra(Constants.COUNTABLE_COUNT, tvCompletedCount.getText().toString());
                 itemView.getContext().startActivity(intent);
             }
         });
@@ -61,7 +59,7 @@ public class CountableViewHolder extends RecyclerView.ViewHolder implements Base
 
     @Override
     public void onItemSelected() {
-        itemView.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.bright_faded_app_green));
+        itemView.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.faded_bright_app_green));
     }
 
     @Override

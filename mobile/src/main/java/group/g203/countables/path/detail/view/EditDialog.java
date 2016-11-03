@@ -21,7 +21,6 @@ public class EditDialog extends BaseDialog {
 
     EditDialogPresenter mPresenter;
     EditCountableListener mListener;
-    String mName;
     @Bind(R.id.etCountableName)
     EditText mCountableName;
 

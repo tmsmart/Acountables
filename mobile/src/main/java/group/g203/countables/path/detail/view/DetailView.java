@@ -10,6 +10,12 @@ public interface DetailView extends BaseView {
 
     void displayReminderView();
 
+    void setTimeLogClick();
+
+    void setAccountableClick();
+
+    void setReminderClick();
+
     void displayInfoDialog();
 
     void displayDeleteDialog();

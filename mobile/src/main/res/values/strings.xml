@@ -8,6 +8,7 @@
 
     <!--Empty Strings-->
     <string name="no_countables">No Countables...</string>
+    <string name="never_completed">Countable never completed...</string>
 
     <!--Sort Dialog Strings-->
     <string name="sort">Sort</string>

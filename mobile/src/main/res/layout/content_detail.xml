@@ -16,6 +16,13 @@
         android:elevation="8dp"
         android:orientation="vertical">
 
+        <ProgressBar
+            android:id="@+id/loading_countable_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+
         <TextView
             android:id="@+id/tvCountableTitle"
             android:layout_width="match_parent"
@@ -46,8 +53,6 @@
         android:id="@+id/loading_frame"
         android:layout_above="@+id/llBottomNav"
         android:layout_below="@+id/llCountableInfo"
-        android:paddingBottom="56dp"
-        android:paddingTop="48dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -57,6 +62,12 @@
             android:layout_height="match_parent"/>
 
     </group.g203.countables.custom_view.loading_view.LoadingAspect>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_above="@+id/llBottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/clSnackBar"/>
 
     <LinearLayout
         android:id="@+id/llBottomNav"
@@ -82,17 +93,19 @@
                 android:id="@+id/ivTimeLog"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
+                android:tint="@color/app_gray"
                 android:src="@mipmap/ic_clock"/>
 
             <TextView
                 android:id="@+id/tvTimeLog"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/fallback_gray"
                 android:text="@string/time_log"/>
             </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/llAccountability"
+            android:id="@+id/llAccountable"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".333"
@@ -103,12 +116,14 @@
                 android:id="@+id/ivAccountable"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
+                android:tint="@color/fallback_gray"
                 android:src="@mipmap/ic_accountable"/>
 
             <TextView
-                android:id="@+id/tvAccountability"
+                android:id="@+id/tvAccountable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/app_gray"
                 android:text="@string/accountability"/>
         </LinearLayout>
 
@@ -124,12 +139,14 @@
                 android:id="@+id/ivReminder"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
+                android:tint="@color/fallback_gray"
                 android:src="@mipmap/ic_notification"/>
 
             <TextView
                 android:id="@+id/tvReminder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/app_gray"
                 android:text="@string/reminder"/>
         </LinearLayout>
 

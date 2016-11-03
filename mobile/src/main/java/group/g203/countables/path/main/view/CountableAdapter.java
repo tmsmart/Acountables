@@ -22,7 +22,6 @@ public class CountableAdapter extends RecyclerView.Adapter<CountableViewHolder> 
     CountableViewHolderPresenter mPresenter;
     private OnStartDragListener mDragStartListener;
 
-
     public CountableAdapter(OrderedRealmCollection<Countable> countableData, OnStartDragListener dragStartListener) {
         mDataModels = countableData;
         mDragStartListener = dragStartListener;

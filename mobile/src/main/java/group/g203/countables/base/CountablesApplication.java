@@ -31,7 +31,32 @@ public class CountablesApplication extends Application {
                 RealmList<DateField> dates = new RealmList<>();
                 DateField date = realm.createObject(DateField.class);
                 date.date = new Date();
+
+                DateField date0 = realm.createObject(DateField.class);
+                date.date = new Date();
+
+                DateField date1 = realm.createObject(DateField.class);
+                date.date = new Date();
+
+                DateField date2 = realm.createObject(DateField.class);
+                date.date = new Date();
+
+                DateField date3 = realm.createObject(DateField.class);
+                date.date = new Date();
+
+                DateField date4 = realm.createObject(DateField.class);
+                date.date = new Date();
+
+                DateField date5 = realm.createObject(DateField.class);
+                date.date = new Date();
+
                 dates.add(date);
+                dates.add(date0);
+                dates.add(date1);
+                dates.add(date2);
+                dates.add(date3);
+                dates.add(date4);
+                dates.add(date5);
 
                 Date d = null;
                 Date d1 = null;

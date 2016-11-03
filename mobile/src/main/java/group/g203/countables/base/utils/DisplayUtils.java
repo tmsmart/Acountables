@@ -2,8 +2,11 @@ package group.g203.countables.base.utils;
 
 import android.content.Context;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Toast;
+
+import group.g203.countables.R;
 
 public class DisplayUtils {
 
@@ -19,11 +22,11 @@ public class DisplayUtils {
 
     public static void displayActionSnackbar(View view, String msg,
                                              String actionText, int displayDuration,
-                                             int colorInt, View.OnClickListener listener,
+                                             View.OnClickListener listener,
                                              Snackbar.Callback callback) {
         Snackbar.make(view, msg, displayDuration)
                 .setAction(actionText, listener)
-                .setActionTextColor(colorInt)
+                .setActionTextColor(ContextCompat.getColor(view.getContext(), R.color.bright_app_green))
                 .setCallback(callback)
                 .show();
     }

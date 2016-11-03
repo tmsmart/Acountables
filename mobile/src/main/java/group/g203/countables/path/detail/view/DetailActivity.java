@@ -2,6 +2,7 @@ package group.g203.countables.path.detail.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,17 +10,55 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.manager.BasePresenterManager;
 import group.g203.countables.base.presenter.BasePresenter;
+import group.g203.countables.custom_view.loading_view.LoadingAspect;
 import group.g203.countables.path.detail.presenter.DetailPresenter;
 
 public class DetailActivity extends AppCompatActivity implements DetailView, DeleteDialog.DeleteCountableListener,
-        EditDialog.EditCountableListener {
+        EditDialog.EditCountableListener, TimeLogFragment.CompleteCountListener {
+
+    public final static int TIME_LOG_INDEX = 0;
+    public final static int ACCOUNTABLE_INDEX = 1;
+    public final static int REMINDER_INDEX = 2;
 
     DetailPresenter mPresenter;
+    @Bind(R.id.llAccountable)
+    public LinearLayout llAccountable;
+    @Bind(R.id.llTimeLog)
+    public LinearLayout llTimeLog;
+    @Bind(R.id.llReminder)
+    public LinearLayout llReminder;
+    @Bind(R.id.tvAccountable)
+    public TextView tvAccountable;
+    @Bind(R.id.ivAccountable)
+    public ImageView ivAccountable;
+    @Bind(R.id.tvReminder)
+    public TextView tvReminder;
+    @Bind(R.id.ivReminder)
+    public ImageView ivReminder;
+    @Bind(R.id.tvTimeLog)
+    public TextView tvTimeLog;
+    @Bind(R.id.ivTimeLog)
+    public ImageView ivTimeLog;
+    @Bind(R.id.loading_frame)
+    public LoadingAspect mLoadingAspect;
+    @Bind(R.id.loading_countable_info)
+    public ProgressBar mInfoProgress;
+    @Bind(R.id.frame)
+    public FrameLayout mFrame;
+    @Bind(R.id.clSnackBar)
+    public CoordinatorLayout mSnack;
     public View mView;
 
     @Override
@@ -29,6 +68,7 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mView = inflater.inflate(R.layout.activity_detail, null, false);
         setContentView(mView);
+        ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(Constants.EMPTY_STRING);
         toolbar.setSubtitle(Constants.EMPTY_STRING);
@@ -66,17 +106,32 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
 
     @Override
     public void displayTimeLog() {
-
+        mPresenter.displayTimeLog(getSupportFragmentManager());
     }
 
     @Override
     public void displayAccountableView() {
-
+        mPresenter.displayAccountableView(getSupportFragmentManager());
     }
 
     @Override
     public void displayReminderView() {
+        mPresenter.displayReminderView(getSupportFragmentManager());
+    }
 
+    @Override
+    public void setTimeLogClick() {
+        mPresenter.setTimeLogClick(getSupportFragmentManager());
+    }
+
+    @Override
+    public void setAccountableClick() {
+        mPresenter.setAccountableClick(getSupportFragmentManager());
+    }
+
+    @Override
+    public void setReminderClick() {
+        mPresenter.setReminderClick(getSupportFragmentManager());
     }
 
     @Override
@@ -96,8 +151,7 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
 
     @Override
     public void setInitialCountableInfo() {
-        mPresenter.handleInitDisplay(getIntent().getExtras().getString(Constants.COUNTABLE_NAME),
-                getIntent().getExtras().getString(Constants.COUNTABLE_COUNT));
+        mPresenter.handleInitDisplay(TIME_LOG_INDEX);
     }
 
     @Override
@@ -121,7 +175,6 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
         super.onSaveInstanceState(outState);
     }
 
-
     @Override
     public void onDeleteCountableClick(DeleteDialog dialog) {
         mPresenter.deleteAndGoBack();
@@ -130,5 +183,15 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
     @Override
     public void onEditCountableClick(EditDialog dialog) {
         mPresenter.renameCountable(dialog.mCountableName.getText().toString());
+    }
+
+    public void setEmptyParams() {
+        mPresenter.setEmptyIcon(R.mipmap.ic_clock);
+        mPresenter.setEmptyMessage(getString(R.string.never_completed));
+    }
+
+    @Override
+    public void onEditCompleteCount(String count) {
+        mPresenter.setCompletedCount(count);
     }
 }

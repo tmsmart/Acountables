@@ -4,8 +4,6 @@ public class Constants {
 
     public static final String NEWLINE = "\n";
 
-    public static final String DASH = "-";
-
     public static final String UNDO = "Undo";
 
     public static final String SPACE = " ";
@@ -25,5 +23,7 @@ public class Constants {
     public static final String COUNTABLE_NAME = "countableName";
 
     public static final String COUNTABLE_COUNT = "countableCount";
+
+    public final static String INDEX = "index";
 
 }
