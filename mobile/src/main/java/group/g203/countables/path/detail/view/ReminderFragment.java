@@ -16,7 +16,6 @@ import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.custom_view.week_view.DateTimeRepeatAspect;
-import group.g203.countables.path.detail.presenter.AccountablePresenter;
 import group.g203.countables.path.detail.presenter.ReminderPresenter;
 
 public class ReminderFragment extends Fragment implements ReminderView {
@@ -36,8 +35,8 @@ public class ReminderFragment extends Fragment implements ReminderView {
     public View mView;
     ReminderPresenter mPresenter;
 
-    public static AccountableFragment getInstance(String tag, int countableIndex) {
-        AccountableFragment frag = new AccountableFragment();
+    public static ReminderFragment getInstance(String tag, int countableIndex) {
+        ReminderFragment frag = new ReminderFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DIALOG_TAG, tag);
         bundle.putInt(Constants.COUNTABLE_INDEX, countableIndex);
@@ -55,7 +54,7 @@ public class ReminderFragment extends Fragment implements ReminderView {
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.accountable_reminder_layout, container, false);
         ButterKnife.bind(this, mView);
-        setPresenter(new AccountablePresenter());
+        setPresenter(new ReminderPresenter());
         handleDisplay();
         return mView;
     }

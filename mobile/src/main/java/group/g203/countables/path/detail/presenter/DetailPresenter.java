@@ -35,6 +35,7 @@ import group.g203.countables.path.detail.view.DeleteDialog;
 import group.g203.countables.path.detail.view.DetailActivity;
 import group.g203.countables.path.detail.view.DetailView;
 import group.g203.countables.path.detail.view.EditDialog;
+import group.g203.countables.path.detail.view.ReminderFragment;
 import group.g203.countables.path.detail.view.TimeLogFragment;
 import group.g203.countables.path.main.presenter.InfoDialogPresenter;
 import group.g203.countables.path.main.presenter.MainPresenter;
@@ -257,8 +258,8 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
 
     public void displayReminderView(FragmentManager fm) {
         displayLoading();
-        String tag = AccountableFragment.TAG;
-        showFragmentContent(AccountableFragment.getInstance(tag,
+        String tag = ReminderFragment.TAG;
+        showFragmentContent(ReminderFragment.getInstance(tag,
                 ((DetailActivity) mDetailView).getIntent().getExtras().getInt(Constants.COUNTABLE_INDEX)),
                 tag, fm);
         handleBottomNavColorization(mReminderTv, mReminderIv, mTimeLogTv, mAccountableTv, mTimeLogIv, mAccountableIv);
