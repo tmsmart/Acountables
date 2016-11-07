@@ -8,14 +8,14 @@ import android.widget.LinearLayout;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.view.BaseView;
-import group.g203.countables.custom_view.week_view.DateTimeRepeatAspect;
-import group.g203.countables.custom_view.week_view.DateTimeRepeatPresenter;
+import group.g203.countables.custom_view.week_view.DateRepeatAspect;
+import group.g203.countables.custom_view.week_view.DateRepeatPresenter;
 import group.g203.countables.model.Countable;
 import group.g203.countables.path.detail.view.ReminderFragment;
 import group.g203.countables.path.detail.view.ReminderView;
 import io.realm.Realm;
 
-public class ReminderPresenter implements BasePresenter, DateTimeRepeatPresenter {
+public class ReminderPresenter implements BasePresenter, DateRepeatPresenter {
 
     Realm mRealm;
     ReminderView mReminderView;
@@ -24,7 +24,7 @@ public class ReminderPresenter implements BasePresenter, DateTimeRepeatPresenter
     LinearLayout mIsSetLayout;
     ImageView ivDelete;
     ImageView ivEdit;
-    DateTimeRepeatAspect mAspect;
+    DateRepeatAspect mAspect;
     Countable mCountable;
 
     @Override
@@ -48,7 +48,7 @@ public class ReminderPresenter implements BasePresenter, DateTimeRepeatPresenter
     @Override
     public void bindViews(BaseView... views) {
         mReminderView = (ReminderView) views[0];
-        mAspect = (DateTimeRepeatAspect) views[1];
+        mAspect = (DateRepeatAspect) views[1];
         mContext = mAspect.getContext();
 
         mSwitch = ((ReminderFragment) mReminderView).mSwitch;
@@ -101,11 +101,6 @@ public class ReminderPresenter implements BasePresenter, DateTimeRepeatPresenter
 
     @Override
     public void setRepeatDay() {
-
-    }
-
-    @Override
-    public void setTime() {
 
     }
 

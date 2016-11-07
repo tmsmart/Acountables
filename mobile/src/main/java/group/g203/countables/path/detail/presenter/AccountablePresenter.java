@@ -8,14 +8,14 @@ import android.widget.LinearLayout;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.view.BaseView;
-import group.g203.countables.custom_view.week_view.DateTimeRepeatAspect;
-import group.g203.countables.custom_view.week_view.DateTimeRepeatPresenter;
+import group.g203.countables.custom_view.week_view.DateRepeatAspect;
+import group.g203.countables.custom_view.week_view.DateRepeatPresenter;
 import group.g203.countables.model.Countable;
 import group.g203.countables.path.detail.view.AccountableFragment;
 import group.g203.countables.path.detail.view.AccountableView;
 import io.realm.Realm;
 
-public class AccountablePresenter implements BasePresenter, DateTimeRepeatPresenter {
+public class AccountablePresenter implements BasePresenter, DateRepeatPresenter {
 
     Realm mRealm;
     AccountableView mAccountableView;
@@ -24,7 +24,7 @@ public class AccountablePresenter implements BasePresenter, DateTimeRepeatPresen
     LinearLayout mIsSetLayout;
     ImageView ivDelete;
     ImageView ivEdit;
-    DateTimeRepeatAspect mAspect;
+    DateRepeatAspect mAspect;
     Countable mCountable;
 
     @Override
@@ -48,7 +48,7 @@ public class AccountablePresenter implements BasePresenter, DateTimeRepeatPresen
     @Override
     public void bindViews(BaseView... views) {
         mAccountableView = (AccountableView) views[0];
-        mAspect = (DateTimeRepeatAspect) views[1];
+        mAspect = (DateRepeatAspect) views[1];
         mContext = mAspect.getContext();
 
         mSwitch = ((AccountableFragment)mAccountableView).mSwitch;
@@ -101,11 +101,6 @@ public class AccountablePresenter implements BasePresenter, DateTimeRepeatPresen
 
     @Override
     public void setRepeatDay() {
-
-    }
-
-    @Override
-    public void setTime() {
 
     }
 

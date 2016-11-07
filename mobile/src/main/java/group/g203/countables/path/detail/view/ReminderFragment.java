@@ -15,7 +15,7 @@ import butterknife.ButterKnife;
 import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.BasePresenter;
-import group.g203.countables.custom_view.week_view.DateTimeRepeatAspect;
+import group.g203.countables.custom_view.week_view.DateRepeatAspect;
 import group.g203.countables.path.detail.presenter.ReminderPresenter;
 
 public class ReminderFragment extends Fragment implements ReminderView {
@@ -31,7 +31,7 @@ public class ReminderFragment extends Fragment implements ReminderView {
     @Bind(R.id.ivEdit)
     public ImageView ivEdit;
     @Bind(R.id.dtrAspect)
-    public DateTimeRepeatAspect mAspect;
+    public DateRepeatAspect mAspect;
     public View mView;
     ReminderPresenter mPresenter;
 

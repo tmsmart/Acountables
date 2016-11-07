@@ -3,10 +3,8 @@ package group.g203.countables.custom_view.week_view;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,7 +13,7 @@ import butterknife.ButterKnife;
 import group.g203.countables.R;
 import group.g203.countables.base.presenter.BasePresenter;
 
-public class DateTimeRepeatAspect extends LinearLayout implements DateTimeRepeatView {
+public class DateRepeatAspect extends LinearLayout implements DateRepeatView {
 
     @Bind(R.id.tvMonth)
     public TextView tvMonth;
@@ -35,37 +33,25 @@ public class DateTimeRepeatAspect extends LinearLayout implements DateTimeRepeat
     public LinearLayout llDaySeven;
     @Bind(R.id.llRepeat)
     public LinearLayout llRepeat;
-    @Bind(R.id.llTime)
-    public LinearLayout llTime;
-    @Bind(R.id.etHours)
-    public EditText etHours;
-    @Bind(R.id.etMins)
-    public EditText etMins;
-    @Bind(R.id.etRepeatDays)
-    public EditText etRepeatDays;
-    @Bind(R.id.rbAm)
-    public AppCompatRadioButton rbAm;
-    @Bind(R.id.rbPm)
-    public AppCompatRadioButton rbPm;
-    DateTimeRepeatPresenter mPresenter;
+    DateRepeatPresenter mPresenter;
 
-    public DateTimeRepeatAspect(Context context) {
+    public DateRepeatAspect(Context context) {
         super(context);
         init();
     }
 
-    public DateTimeRepeatAspect(Context context, AttributeSet attrs) {
+    public DateRepeatAspect(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public DateTimeRepeatAspect(Context context, AttributeSet attrs, int defStyleAttr) {
+    public DateRepeatAspect(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public DateTimeRepeatAspect(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public DateRepeatAspect(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
@@ -111,19 +97,14 @@ public class DateTimeRepeatAspect extends LinearLayout implements DateTimeRepeat
     }
 
     @Override
-    public void onSetTime() {
-        mPresenter.setTime();
-    }
-
-    @Override
     public void onSetRepeatDayWatcher() {
         mPresenter.setRepeatDayWatcher();
     }
 
     @Override
     public <P extends BasePresenter> void setPresenter(P presenter) {
-        if (presenter instanceof DateTimeRepeatPresenter) {
-            mPresenter = (DateTimeRepeatPresenter) presenter;
+        if (presenter instanceof DateRepeatPresenter) {
+            mPresenter = (DateRepeatPresenter) presenter;
         } else {
             mPresenter.displayToast(getContext().getString(R.string.view_error));
         }

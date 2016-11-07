@@ -40,7 +40,7 @@
 
     </LinearLayout>
 
-    <group.g203.countables.custom_view.week_view.DateTimeRepeatAspect
+    <group.g203.countables.custom_view.week_view.DateRepeatAspect
         android:id="@+id/dtrAspect"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
