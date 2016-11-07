@@ -77,7 +77,6 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
 
     Realm mRealm;
     MainView mMainView;
-    View mView;
     CoordinatorLayout mSnackLayout;
     LoadingAspect mLoadingAspect;
     RecyclerView mCountablesRv;
@@ -104,13 +103,11 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     @Override
     public void bindViews(BaseView... views) {
         mMainView = (MainView) views[0];
-        mView = ((MainActivity) mMainView).mView;
-
-        mSnackLayout = ((MainActivity) mMainView).clSnack;
-
-        mLoadingAspect = ((MainActivity) mMainView).mLoadingAspect;
+        mLoadingAspect = (LoadingAspect) views[1];
         mLoadingAspect.setPresenter(((MainActivity) mMainView).getPresenter());
         mContext = mLoadingAspect.getContext();
+
+        mSnackLayout = ((MainActivity) mMainView).clSnack;
 
         mCountablesRv = ((MainActivity) mMainView).mCountablesRv;
 

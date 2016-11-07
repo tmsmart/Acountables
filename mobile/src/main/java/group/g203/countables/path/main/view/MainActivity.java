@@ -24,7 +24,7 @@ import group.g203.countables.path.main.presenter.MainPresenter;
 public class MainActivity extends AppCompatActivity implements MainView {
 
     @Bind(R.id.loading_aspect)
-    public LoadingAspect mLoadingAspect;
+    LoadingAspect mLoadingAspect;
     @Bind(R.id.rvCountables)
     public RecyclerView mCountablesRv;
     @Bind(R.id.etCountable)

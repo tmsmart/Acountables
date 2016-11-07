@@ -30,6 +30,7 @@ import group.g203.countables.base.view.BaseView;
 import group.g203.countables.custom_view.loading_view.LoadingAspect;
 import group.g203.countables.custom_view.loading_view.LoadingPresenter;
 import group.g203.countables.model.Countable;
+import group.g203.countables.path.detail.view.AccountableFragment;
 import group.g203.countables.path.detail.view.DeleteDialog;
 import group.g203.countables.path.detail.view.DetailActivity;
 import group.g203.countables.path.detail.view.DetailView;
@@ -246,12 +247,22 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
 
     public void displayAccountableView(FragmentManager fm) {
         displayLoading();
+        String tag = AccountableFragment.TAG;
+        showFragmentContent(AccountableFragment.getInstance(tag,
+                ((DetailActivity) mDetailView).getIntent().getExtras().getInt(Constants.COUNTABLE_INDEX)),
+                tag, fm);
         handleBottomNavColorization(mAccountableTv, mAccountableIv, mTimeLogTv, mReminderTv, mTimeLogIv, mReminderIv);
+        displayContent();
     }
 
     public void displayReminderView(FragmentManager fm) {
         displayLoading();
+        String tag = AccountableFragment.TAG;
+        showFragmentContent(AccountableFragment.getInstance(tag,
+                ((DetailActivity) mDetailView).getIntent().getExtras().getInt(Constants.COUNTABLE_INDEX)),
+                tag, fm);
         handleBottomNavColorization(mReminderTv, mReminderIv, mTimeLogTv, mAccountableTv, mTimeLogIv, mAccountableIv);
+        displayContent();
     }
 
     public void setTimeLogClick(final FragmentManager fm) {

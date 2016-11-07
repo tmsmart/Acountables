@@ -70,6 +70,12 @@
     <string name="daily">Daily</string>
     <string name="weekly">Weekly</string>
     <string name="custom">Custom</string>
+    <string name="time">Time</string>
+    <string name="colon">:</string>
+    <string name="am">AM</string>
+    <string name="pm">PM</string>
+    <string name="repeat_every">Repeat every</string>
+    <string name="days">days</string>
 
     <!--Error Strings-->
     <string name="general_error">An unexpected error occurred. Please try the previous action again.</string>
