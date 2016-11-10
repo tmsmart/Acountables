@@ -64,18 +64,24 @@
     <string name="accountability">Accountability</string>
     <string name="reminder">Reminder</string>
 
-   <!--Accountability/Reminder Strings-->
+   <!--Accountability Strings-->
     <string name="enable_accountable">Enable Accountability Schedule</string>
-    <string name="enable_reminder">Set Reminder</string>
     <string name="daily">Daily</string>
     <string name="weekly">Weekly</string>
     <string name="custom">Custom</string>
+    <string name="repeat_every">Repeat every</string>
+    <string name="days">days</string>
+    <item type="id" name="dateId"/>
+    <item type="id" name="dateFieldId"/>
+    <item type="id" name="selectedId"/>
+
+    <!--Reminder Strings-->
+    <string name="reminder_info">Reminders are based on your Accountability schedule and will be notifications sent to your phone at the time you request below.</string>
+    <string name="enable_reminder">Set Reminder</string>
     <string name="time">Time</string>
     <string name="colon">:</string>
     <string name="am">AM</string>
     <string name="pm">PM</string>
-    <string name="repeat_every">Repeat every</string>
-    <string name="days">days</string>
 
     <!--Error Strings-->
     <string name="general_error">An unexpected error occurred. Please try the previous action again.</string>

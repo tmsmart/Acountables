@@ -3,6 +3,7 @@ package group.g203.countables.custom_view.week_view;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -31,6 +32,12 @@ public class DateRepeatAspect extends LinearLayout implements DateRepeatView {
     public LinearLayout llDaySix;
     @Bind(R.id.daySeven)
     public LinearLayout llDaySeven;
+    @Bind(R.id.rbDaily)
+    public AppCompatRadioButton rbDaily;
+    @Bind(R.id.rbWeekly)
+    public AppCompatRadioButton rbWeekly;
+    @Bind(R.id.rbCustom)
+    public AppCompatRadioButton rbCustom;
     @Bind(R.id.llRepeat)
     public LinearLayout llRepeat;
     DateRepeatPresenter mPresenter;
@@ -72,8 +79,8 @@ public class DateRepeatAspect extends LinearLayout implements DateRepeatView {
     }
 
     @Override
-    public void onSetReadOnlyAspect() {
-        mPresenter.setReadOnlyAspect();
+    public void onSetReadOnlyAspect(boolean disableReminder) {
+        mPresenter.setReadOnlyAspect(disableReminder);
     }
 
     @Override

@@ -48,7 +48,6 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
 
     private final static String COUNTABLE_DELETED = "Countable deleted successfully";
     private final static String COUNTABLE_EDITED = "Countable named edited successfully";
-    private final static int EMPTY_ICON_DIMEN = 120;
 
     Realm mRealm;
     DetailView mDetailView;

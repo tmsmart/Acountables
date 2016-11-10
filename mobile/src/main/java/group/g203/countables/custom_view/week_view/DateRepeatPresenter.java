@@ -6,7 +6,7 @@ public interface DateRepeatPresenter extends GeneralPresenter {
 
     void setActiveAspect();
 
-    void setReadOnlyAspect();
+    void setReadOnlyAspect(boolean makeUnaccountable);
 
     void setRepeatOptionClicks();
 

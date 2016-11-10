@@ -6,7 +6,7 @@ public interface DateRepeatView extends BaseView {
 
     void onSetActiveAspect();
 
-    void onSetReadOnlyAspect();
+    void onSetReadOnlyAspect(boolean disableInDb);
 
     void onSetRepeatOptionClicks();
 

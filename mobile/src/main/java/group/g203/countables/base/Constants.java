@@ -22,7 +22,17 @@ public class Constants {
 
     public static final String COUNTABLE_NAME = "countableName";
 
-    public static final String COUNTABLE_COUNT = "countableCount";
+    public static final String ZERO_STRING = "0";
+
+    public static final int ZERO = 0;
+
+    public static final int ONE = 1;
+
+    public static final int HOURS_MAX = 12;
+
+    public static final int MINS_MAX = 59;
+
+    public static final String TWO_ZEROES = "00";
 
     public final static String INDEX = "index";
 

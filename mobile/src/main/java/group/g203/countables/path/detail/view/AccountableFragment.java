@@ -7,8 +7,8 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,10 +26,10 @@ public class AccountableFragment extends Fragment implements AccountableView {
     public SwitchCompat mSwitch;
     @Bind(R.id.llIsSet)
     public LinearLayout mIsSetLayout;
-    @Bind(R.id.ivDelete)
-    public ImageView ivDelete;
-    @Bind(R.id.ivEdit)
-    public ImageView ivEdit;
+    @Bind(R.id.tvDelete)
+    public TextView tvDelete;
+    @Bind(R.id.tvEdit)
+    public TextView tvEdit;
     @Bind(R.id.dtrAspect)
     public DateRepeatAspect mAspect;
     public View mView;
@@ -52,7 +52,7 @@ public class AccountableFragment extends Fragment implements AccountableView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.accountable_reminder_layout, container, false);
+        mView = inflater.inflate(R.layout.accountable_layout, container, false);
         ButterKnife.bind(this, mView);
         setPresenter(new AccountablePresenter());
         handleDisplay();

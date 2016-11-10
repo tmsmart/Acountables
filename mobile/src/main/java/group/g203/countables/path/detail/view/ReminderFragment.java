@@ -3,19 +3,20 @@ package group.g203.countables.path.detail.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.BasePresenter;
-import group.g203.countables.custom_view.week_view.DateRepeatAspect;
 import group.g203.countables.path.detail.presenter.ReminderPresenter;
 
 public class ReminderFragment extends Fragment implements ReminderView {
@@ -26,12 +27,23 @@ public class ReminderFragment extends Fragment implements ReminderView {
     public SwitchCompat mSwitch;
     @Bind(R.id.llIsSet)
     public LinearLayout mIsSetLayout;
-    @Bind(R.id.ivDelete)
-    public ImageView ivDelete;
-    @Bind(R.id.ivEdit)
-    public ImageView ivEdit;
-    @Bind(R.id.dtrAspect)
-    public DateRepeatAspect mAspect;
+    @Bind(R.id.llReminderInfo)
+    public LinearLayout llReminderInfo;
+    @Bind(R.id.tvDelete)
+    public TextView tvDelete;
+    @Bind(R.id.tvEdit)
+    public TextView tvEdit;
+    @Bind(R.id.llTime)
+    public LinearLayout llTime;
+    @Bind(R.id.rbAm)
+    public AppCompatRadioButton rbAm;
+    @Bind(R.id.rbPm)
+    public AppCompatRadioButton rbPm;
+    @Bind(R.id.etHours)
+    public EditText etHours;
+    @Bind(R.id.etMins)
+    public EditText etMins;
+
     public View mView;
     ReminderPresenter mPresenter;
 
@@ -52,7 +64,7 @@ public class ReminderFragment extends Fragment implements ReminderView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.accountable_reminder_layout, container, false);
+        mView = inflater.inflate(R.layout.reminder_layout, container, false);
         ButterKnife.bind(this, mView);
         setPresenter(new ReminderPresenter());
         handleDisplay();
@@ -93,7 +105,7 @@ public class ReminderFragment extends Fragment implements ReminderView {
     public <P extends BasePresenter> void setPresenter(P presenter) {
         if (presenter instanceof ReminderPresenter) {
             mPresenter = (ReminderPresenter) presenter;
-            mPresenter.bindViews(this, mAspect);
+            mPresenter.bindViews(this);
         } else {
             mPresenter.displaySnackbarMessage(getString(R.string.general_error));
         }

@@ -3,18 +3,21 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_marginTop="4dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginBottom="8dp">
 
     <RadioGroup
         android:id="@+id/rgRepeatOptions"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="4dp"
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/rbDaily"
+            android:enabled="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/fallback_gray"
@@ -22,6 +25,7 @@
 
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/rbWeekly"
+            android:enabled="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/fallback_gray"
@@ -29,6 +33,7 @@
 
         <android.support.v7.widget.AppCompatRadioButton
             android:id="@+id/rbCustom"
+            android:enabled="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/fallback_gray"
@@ -39,7 +44,7 @@
         android:id="@+id/tvMonth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:textStyle="bold|italic"
         android:textColor="@color/fallback_gray"
         android:layout_marginBottom="4dp" />
@@ -57,6 +62,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/gray_border"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -84,6 +91,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:textColor="@color/fallback_gray"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -96,6 +104,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/gray_border"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -123,6 +133,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:textColor="@color/fallback_gray"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -135,6 +146,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/gray_border"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -162,6 +175,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:textColor="@color/fallback_gray"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -174,6 +188,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/gray_border"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -201,6 +217,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:textColor="@color/fallback_gray"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -213,6 +230,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/gray_border"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -240,6 +259,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:textColor="@color/fallback_gray"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -252,6 +272,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/gray_border"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -279,6 +301,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:textColor="@color/fallback_gray"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -291,6 +314,8 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/gray_border"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -318,6 +343,7 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:textColor="@color/fallback_gray"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -332,6 +358,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="4dp"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <TextView
@@ -344,15 +371,19 @@
             android:id="@+id/etRepeatDays"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
             android:gravity="center_horizontal"
+            android:enabled="false"
             android:textColor="@color/fallback_gray"
+            android:background="@android:color/transparent"
+            android:text="0"
+            android:maxLength="2"
+            android:inputType="number"
             android:ems="2"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/fallback_gray"
+            android:textColor="@color/app_gray"
             android:text="@string/days"/>
 
     </LinearLayout>
