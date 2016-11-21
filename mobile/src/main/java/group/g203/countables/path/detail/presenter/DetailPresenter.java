@@ -35,6 +35,7 @@ import group.g203.countables.path.detail.view.DeleteDialog;
 import group.g203.countables.path.detail.view.DetailActivity;
 import group.g203.countables.path.detail.view.DetailView;
 import group.g203.countables.path.detail.view.EditDialog;
+import group.g203.countables.path.detail.view.EditTimeDialog;
 import group.g203.countables.path.detail.view.ReminderFragment;
 import group.g203.countables.path.detail.view.TimeLogFragment;
 import group.g203.countables.path.main.presenter.InfoDialogPresenter;
@@ -44,7 +45,7 @@ import io.realm.Realm;
 import io.realm.Sort;
 
 public class DetailPresenter implements BasePresenter, InfoDialogPresenter, DeleteDialogPresenter,
-        EditDialogPresenter, LoadingPresenter, DateViewHolderPresenter {
+        EditDialogPresenter, LoadingPresenter, DateViewHolderPresenter, TimeDialogPresenter {
 
     private final static String COUNTABLE_DELETED = "Countable deleted successfully";
     private final static String COUNTABLE_EDITED = "Countable named edited successfully";
@@ -417,5 +418,79 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
         ((TextView) views[1]).setTextColor(textColor);
         ((ImageView) views[2]).setColorFilter(iconColor);
         ((ImageView) views[3]).setColorFilter(iconColor);
+    }
+
+    public void resetReminder(FragmentManager fm) {
+        String tag = ReminderFragment.TAG;
+        ReminderFragment fragment = (ReminderFragment) fm.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.getPresenter().resetReminder();
+        } else {
+            DisplayUtils.displayToast(mContext, mContext.getString(R.string.countable_edit_error), Toast.LENGTH_SHORT);
+        }
+    }
+
+    public void deleteReminder(FragmentManager fm) {
+        String tag = ReminderFragment.TAG;
+        ReminderFragment fragment = (ReminderFragment) fm.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.getPresenter().onDeleteReminder();
+        } else {
+            DisplayUtils.displayToast(mContext, mContext.getString(R.string.countable_edit_error), Toast.LENGTH_SHORT);
+        }
+    }
+
+    public void deleteAccountability(FragmentManager fm) {
+        String tag = AccountableFragment.TAG;
+        AccountableFragment fragment = (AccountableFragment) fm.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.getPresenter().onDeleteAccountability();
+        } else {
+            DisplayUtils.displayToast(mContext, mContext.getString(R.string.countable_edit_error), Toast.LENGTH_SHORT);
+        }
+    }
+
+    public void editAccountability(FragmentManager fm) {
+        String tag = AccountableFragment.TAG;
+        AccountableFragment fragment = (AccountableFragment) fm.findFragmentByTag(tag);
+        if (fragment != null) {
+            fragment.getPresenter().editAccountability();
+        } else {
+            DisplayUtils.displayToast(mContext, mContext.getString(R.string.countable_edit_error), Toast.LENGTH_SHORT);
+        }
+    }
+
+
+    @Override
+    public void setDialogTitle(AlertDialog.Builder builder, String title) {
+        builder.setTitle(title);
+    }
+
+    @Override
+    public void setDialogNegativeButton(AlertDialog.Builder builder, String buttonText) {
+        builder.setNegativeButton(buttonText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+    }
+
+    @Override
+    public void setDialogPositiveButton(AlertDialog.Builder builder, String buttonText, final EditTimeDialog.TimeDialogListener listener, final EditTimeDialog mDialog) {
+        builder.setPositiveButton(buttonText, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (mDialog.dialogCode == EditTimeDialog.DELETE_SCHEDULE) {
+                    listener.onDeleteAccountableClick(mDialog);
+                } else if (mDialog.dialogCode == EditTimeDialog.DELETE_REMINDER) {
+                    listener.onDeleteReminderClick(mDialog);
+                } else if (mDialog.dialogCode == EditTimeDialog.EDIT_SCHEDULE) {
+                    listener.onEditAccountableClick(mDialog);
+                } else if (mDialog.dialogCode == EditTimeDialog.EDIT_REMINDER) {
+                    listener.onEditReminderClick(mDialog);
+                }
+            }
+        });
     }
 }

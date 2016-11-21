@@ -7,6 +7,7 @@ import android.support.v7.widget.AppCompatRadioButton;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -32,6 +33,8 @@ public class DateRepeatAspect extends LinearLayout implements DateRepeatView {
     public LinearLayout llDaySix;
     @Bind(R.id.daySeven)
     public LinearLayout llDaySeven;
+    @Bind(R.id.rgRepeatOptions)
+    public RadioGroup rgOptions;
     @Bind(R.id.rbDaily)
     public AppCompatRadioButton rbDaily;
     @Bind(R.id.rbWeekly)

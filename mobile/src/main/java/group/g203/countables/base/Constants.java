@@ -20,6 +20,8 @@ public class Constants {
 
     public static final String DIALOG_TAG = "dialogTag";
 
+    public static final String DIALOG_TITLE = "dialogTitle";
+
     public static final String COUNTABLE_NAME = "countableName";
 
     public static final String ZERO_STRING = "0";

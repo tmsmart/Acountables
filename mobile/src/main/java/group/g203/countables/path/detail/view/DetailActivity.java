@@ -26,7 +26,7 @@ import group.g203.countables.custom_view.loading_view.LoadingAspect;
 import group.g203.countables.path.detail.presenter.DetailPresenter;
 
 public class DetailActivity extends AppCompatActivity implements DetailView, DeleteDialog.DeleteCountableListener,
-        EditDialog.EditCountableListener, TimeLogFragment.CompleteCountListener {
+        EditDialog.EditCountableListener, TimeLogFragment.CompleteCountListener, EditTimeDialog.TimeDialogListener {
 
     public final static int TIME_LOG_INDEX = 0;
     public final static int ACCOUNTABLE_INDEX = 1;
@@ -188,5 +188,25 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
     @Override
     public void onEditCompleteCount(String count) {
         mPresenter.setCompletedCount(count);
+    }
+
+    @Override
+    public void onEditAccountableClick(EditTimeDialog dialog) {
+        mPresenter.editAccountability(getSupportFragmentManager());
+    }
+
+    @Override
+    public void onEditReminderClick(EditTimeDialog dialog) {
+        mPresenter.resetReminder(getSupportFragmentManager());
+    }
+
+    @Override
+    public void onDeleteAccountableClick(EditTimeDialog dialog) {
+        mPresenter.deleteAccountability(getSupportFragmentManager());
+    }
+
+    @Override
+    public void onDeleteReminderClick(EditTimeDialog dialog) {
+        mPresenter.deleteReminder(getSupportFragmentManager());
     }
 }

@@ -92,6 +92,6 @@ public class EditDialog extends BaseDialog {
     }
 
     public interface EditCountableListener {
-        public void onEditCountableClick(EditDialog dialog);
+        void onEditCountableClick(EditDialog dialog);
     }
 }

@@ -13,16 +13,20 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import group.g203.countables.R;
 import group.g203.countables.base.Constants;
+import group.g203.countables.base.manager.BaseDialogManager;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.utils.CalendarUtils;
 import group.g203.countables.base.utils.CollectionUtils;
 import group.g203.countables.base.utils.ComparisonUtils;
+import group.g203.countables.base.utils.DisplayUtils;
 import group.g203.countables.base.view.BaseView;
 import group.g203.countables.model.Countable;
 import group.g203.countables.model.DateField;
+import group.g203.countables.path.detail.view.EditTimeDialog;
 import group.g203.countables.path.detail.view.ReminderFragment;
 import group.g203.countables.path.detail.view.ReminderView;
 import io.realm.Realm;
@@ -42,6 +46,8 @@ public class ReminderPresenter implements BasePresenter {
     AppCompatRadioButton rbPm;
     EditText etHours;
     EditText etMins;
+    EditTimeDialog mEditDialog;
+    EditTimeDialog mDeleteDialog;
     Countable mCountable;
 
     @Override
@@ -108,6 +114,8 @@ public class ReminderPresenter implements BasePresenter {
         } else {
             if (!mCountable.isReminderEnabled) {
                 mIsSetLayout.setVisibility(View.GONE);
+                mSwitch.setVisibility(View.VISIBLE);
+                llReminderInfo.setVisibility(View.VISIBLE);
                 setSwitch();
             } else {
                 mSwitch.setVisibility(View.GONE);
@@ -118,7 +126,6 @@ public class ReminderPresenter implements BasePresenter {
                 setDeleteClick();
             }
         }
-
     }
 
     public void setSwitch() {
@@ -131,18 +138,16 @@ public class ReminderPresenter implements BasePresenter {
 
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                modelSanityCheck();
                 if (isChecked) {
-                    modelSanityCheck();
                     getRealmInstance().beginTransaction();
                     mCountable.isReminderEnabled = true;
                     for (DateField field : mCountable.anchorDates) {
                         field.date = CalendarUtils.setNotificationDate(field.date, Constants.ZERO, Constants.ZERO);
                     }
                     getRealmInstance().commitTransaction();
-                    rbAm.setChecked(true);
                     setActive();
                 } else {
-                    modelSanityCheck();
                     getRealmInstance().beginTransaction();
                     mCountable.isReminderEnabled = false;
                     getRealmInstance().commitTransaction();
@@ -153,11 +158,23 @@ public class ReminderPresenter implements BasePresenter {
     }
 
     public void setDeleteClick() {
-
+        tvDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDeleteDialog = EditTimeDialog.getInstance(EditTimeDialog.TAG, mContext.getString(R.string.delete_reminder));
+                BaseDialogManager.displayFragmentDialog(mDeleteDialog, EditTimeDialog.TAG, ((ReminderFragment) mReminderView).getFragmentManager());
+            }
+        });
     }
 
     public void setEditClick() {
-
+        tvEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditDialog = EditTimeDialog.getInstance(EditTimeDialog.TAG, mContext.getString(R.string.edit_reminder));
+                BaseDialogManager.displayFragmentDialog(mEditDialog, EditTimeDialog.TAG, ((ReminderFragment) mReminderView).getFragmentManager());
+            }
+        });
     }
 
     void setReadOnly(boolean disableNotifications) {
@@ -165,8 +182,7 @@ public class ReminderPresenter implements BasePresenter {
             modelSanityCheck();
             getRealmInstance().beginTransaction();
             mCountable.isReminderEnabled = false;
-
-            clearRadioButtons(rbAm, rbPm);
+            getRealmInstance().commitTransaction();
         }
 
         handleRadioButtonsState(false, rbAm, rbPm);
@@ -191,6 +207,7 @@ public class ReminderPresenter implements BasePresenter {
             etHours.setText((hours == Constants.HOURS_MAX) ? Integer.toString(hours) : Integer.toString(hours - Constants.HOURS_MAX));
         } else {
             rbAm.setChecked(true);
+            etHours.setText((hours == Constants.ZERO) ? Integer.toString(Constants.HOURS_MAX) : Integer.toString(hours));
         }
     }
 
@@ -216,15 +233,33 @@ public class ReminderPresenter implements BasePresenter {
         int color = (enabled) ? ContextCompat.getColor(mContext, android.R.color.black) :
                 ContextCompat.getColor(mContext, R.color.app_gray);
 
+        if (enabled) {
+            buttons[0].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        saveTimeOnRbClick(true);
+                    }
+                }
+            });
+
+            buttons[1].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        saveTimeOnRbClick(false);
+                    }
+                }
+            });
+        }
+
         for (AppCompatRadioButton button : buttons) {
             button.setEnabled(enabled);
             button.setTextColor(color);
         }
-    }
 
-    void clearRadioButtons(AppCompatRadioButton... buttons) {
-        for (AppCompatRadioButton button : buttons) {
-            button.setChecked(false);
+        if (!rbAm.isChecked() && !rbPm.isChecked()) {
+            buttons[0].setChecked(true);
         }
     }
 
@@ -260,8 +295,20 @@ public class ReminderPresenter implements BasePresenter {
                                 Integer.parseInt(mins.getText().toString());
 
                         int hoursInt = Integer.parseInt(hours.getText().toString());
-                        int hoursVal = (rbAm.isChecked()) ? hoursInt : (hoursInt == Constants.HOURS_MAX) ?
-                                hoursInt : hoursInt + Constants.HOURS_MAX;
+                        int hoursVal;
+                        if (rbAm.isChecked()) {
+                            if (hoursInt == Constants.HOURS_MAX) {
+                                hoursVal = Constants.ZERO;
+                            } else {
+                                hoursVal = hoursInt;
+                            }
+                        } else {
+                            if (hoursInt == Constants.HOURS_MAX) {
+                                hoursVal = hoursInt;
+                            } else {
+                                hoursVal = hoursInt + Constants.HOURS_MAX;
+                            }
+                        }
 
                         for (DateField field : mCountable.anchorDates) {
                             field.date = CalendarUtils.setNotificationDate(field.date,
@@ -333,5 +380,68 @@ public class ReminderPresenter implements BasePresenter {
                 }
             });
         }
+    }
+
+    public void resetReminder() {
+        mIsSetLayout.setVisibility(View.GONE);
+        setActive();
+        DisplayUtils.displayToast(mContext, mContext.getString(R.string.editing_reminder), Toast.LENGTH_SHORT);
+    }
+
+    public void onDeleteReminder() {
+        modelSanityCheck();
+        getRealmInstance().beginTransaction();
+        mCountable.isReminderEnabled = false;
+        for (DateField field : mCountable.anchorDates) {
+            field.date = CalendarUtils.setNotificationDate(field.date, Constants.ZERO, Constants.ZERO);
+        }
+        getRealmInstance().commitTransaction();
+        mSwitch.setEnabled(false);
+        mIsSetLayout.setVisibility(View.GONE);
+        mSwitch.setVisibility(View.VISIBLE);
+        llReminderInfo.setVisibility(View.VISIBLE);
+        setSwitch();
+        styleReadData();
+        setReadOnly(true);
+        DisplayUtils.displayToast(mContext, mContext.getString(R.string.deleting_reminder), Toast.LENGTH_SHORT);
+    }
+
+    void saveTimeOnRbClick(boolean isAm) {
+        if (TextUtils.isEmpty(etMins.getText().toString())) {
+            etMins.setText(Constants.TWO_ZEROES);
+        } else if (etMins.getText().toString().length() == 1) {
+            etMins.setText(Constants.ZERO_STRING + etMins.getText().toString());
+        }
+        if (TextUtils.isEmpty(etHours.getText().toString())) {
+            etHours.setText(Integer.toString(Constants.HOURS_MAX));
+        }
+
+        modelSanityCheck();
+        getRealmInstance().beginTransaction();
+        int minsVal = (TextUtils.isEmpty(etMins.getText().toString())) ? Constants.ZERO :
+                Integer.parseInt(etMins.getText().toString());
+
+        int hoursInt = Integer.parseInt(etHours.getText().toString());
+        int hoursVal;
+
+        if (isAm) {
+            if (hoursInt == Constants.HOURS_MAX) {
+                hoursVal = Constants.ZERO;
+            } else {
+                hoursVal = hoursInt;
+            }
+        } else {
+            if (hoursInt == Constants.HOURS_MAX) {
+                hoursVal = hoursInt;
+            } else {
+                hoursVal = hoursInt + Constants.HOURS_MAX;
+            }
+        }
+
+        for (DateField field : mCountable.anchorDates) {
+            field.date = CalendarUtils.setNotificationDate(field.date,
+                    hoursVal, minsVal);
+        }
+        getRealmInstance().commitTransaction();
     }
 }

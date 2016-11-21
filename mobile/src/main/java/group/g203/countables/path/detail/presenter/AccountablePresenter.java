@@ -12,6 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,9 +20,11 @@ import java.util.HashSet;
 
 import group.g203.countables.R;
 import group.g203.countables.base.Constants;
+import group.g203.countables.base.manager.BaseDialogManager;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.utils.CalendarUtils;
 import group.g203.countables.base.utils.CollectionUtils;
+import group.g203.countables.base.utils.DisplayUtils;
 import group.g203.countables.base.view.BaseView;
 import group.g203.countables.custom_view.week_view.DateRepeatAspect;
 import group.g203.countables.custom_view.week_view.DateRepeatPresenter;
@@ -29,6 +32,7 @@ import group.g203.countables.model.Countable;
 import group.g203.countables.model.DateField;
 import group.g203.countables.path.detail.view.AccountableFragment;
 import group.g203.countables.path.detail.view.AccountableView;
+import group.g203.countables.path.detail.view.EditTimeDialog;
 import io.realm.Realm;
 import io.realm.RealmList;
 
@@ -43,6 +47,8 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
     TextView tvEdit;
     DateRepeatAspect mAspect;
     Countable mCountable;
+    EditTimeDialog mEditDialog;
+    EditTimeDialog mDeleteDialog;
     ArrayList<LinearLayout> mDayLayouts;
 
     @Override
@@ -123,9 +129,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
             mCountable.isAccountable = false;
             getRealmInstance().commitTransaction();
 
-            clearRadioButtons(mAspect.rbCustom, mAspect.rbDaily, mAspect.rbWeekly);
             ((TextView) mAspect.llRepeat.getChildAt(1)).setText(Constants.ZERO_STRING);
-
         }
 
         handleMonthDisplay(false);
@@ -279,14 +283,13 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
 
         mSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                modelSanityCheck();
                 if (isChecked) {
-                    modelSanityCheck();
                     getRealmInstance().beginTransaction();
                     mCountable.isAccountable = true;
                     getRealmInstance().commitTransaction();
                     setActiveAspect();
                 } else {
-                    modelSanityCheck();
                     getRealmInstance().beginTransaction();
                     mCountable.isAccountable = false;
                     mCountable.anchorDates = null;
@@ -303,11 +306,23 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
     }
 
     public void setDeleteClick() {
-
+        tvDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDeleteDialog = EditTimeDialog.getInstance(EditTimeDialog.TAG, mContext.getString(R.string.delete_schedule));
+                BaseDialogManager.displayFragmentDialog(mDeleteDialog, EditTimeDialog.TAG, ((AccountableFragment) mAccountableView).getFragmentManager());
+            }
+        });
     }
 
     public void setEditClick() {
-
+        tvEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditDialog = EditTimeDialog.getInstance(EditTimeDialog.TAG, mContext.getString(R.string.edit_schedule));
+                BaseDialogManager.displayFragmentDialog(mEditDialog, EditTimeDialog.TAG, ((AccountableFragment) mAccountableView).getFragmentManager());
+            }
+        });
     }
 
     void modelSanityCheck() {
@@ -478,12 +493,6 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
         handleRepeatDisplay(false);
     }
 
-    void clearRadioButtons(AppCompatRadioButton... buttons) {
-        for (AppCompatRadioButton button : buttons) {
-            button.setChecked(false);
-        }
-    }
-
     void handleRepeatDisplay(boolean enabled) {
         final EditText etRepeat = ((EditText) mAspect.llRepeat.getChildAt(1));
 
@@ -529,6 +538,65 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
         }
     }
 
+    public void editAccountability() {
+        mIsSetLayout.setVisibility(View.GONE);
+
+        modelSanityCheck();
+        getRealmInstance().beginTransaction();
+        mCountable.anchorDates = null;
+        mCountable.dayRepeater = 0;
+        getRealmInstance().commitTransaction();
+
+        setDays();
+        setActiveAspect();
+
+        if (mAspect.rbDaily.isChecked()) {
+            modelSanityCheck();
+            getRealmInstance().beginTransaction();
+            mCountable.dayRepeater = Constants.ONE;
+            getRealmInstance().commitTransaction();
+            selectAllForDaily();
+            handleRepeatDisplay(false);
+        }
+
+        if (mAspect.rbWeekly.isChecked()) {
+            modelSanityCheck();
+            getRealmInstance().beginTransaction();
+            mCountable.dayRepeater = CalendarUtils.WEEK_LENGTH;
+            getRealmInstance().commitTransaction();
+            unselectAllForDaily();
+            handleRepeatDisplay(false);
+            handleDayClicks(true);
+        }
+
+        if (mAspect.rbCustom.isChecked()) {
+            unselectAllForDaily();
+            handleRepeatDisplay(true);
+            handleDayClicks(true);
+            ((EditText) mAspect.llRepeat.getChildAt(1)).setText(Integer.toString(mCountable.dayRepeater));
+        }
+
+        DisplayUtils.displayToast(mContext, mContext.getString(R.string.editing_schedule), Toast.LENGTH_SHORT);
+    }
+
+    public void onDeleteAccountability() {
+        modelSanityCheck();
+        getRealmInstance().beginTransaction();
+        mCountable.isAccountable = false;
+        mCountable.anchorDates = null;
+        mCountable.dayRepeater = 0;
+        mCountable.isReminderEnabled = false;
+        getRealmInstance().commitTransaction();
+
+        mIsSetLayout.setVisibility(View.GONE);
+        mSwitch.setVisibility(View.VISIBLE);
+        setSwitch();
+        setDays();
+        setReadOnlyAspect(true);
+        mAspect.rgOptions.clearCheck();
+        DisplayUtils.displayToast(mContext, mContext.getString(R.string.deleting_schedule), Toast.LENGTH_SHORT);
+    }
+
     void showReadOnlyRepeatDisplay() {
         int editColorInt = ContextCompat.getColor(mContext, R.color.darkest_app_green);
         int colorInt = ContextCompat.getColor(mContext, R.color.fallback_gray);
@@ -538,6 +606,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
 
         etRepeat.setEnabled(false);
         etRepeat.setTextColor(editColorInt);
+        etRepeat.setText(Integer.toString(mCountable.dayRepeater));
         ((TextView) mAspect.llRepeat.getChildAt(0)).setTextColor(colorInt);
         ((TextView) mAspect.llRepeat.getChildAt(2)).setTextColor(colorInt);
     }

@@ -78,6 +78,6 @@ public class DeleteDialog extends BaseDialog {
     }
 
     public interface DeleteCountableListener {
-        public void onDeleteCountableClick(DeleteDialog dialog);
+        void onDeleteCountableClick(DeleteDialog dialog);
     }
 }
