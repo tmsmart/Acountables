@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context="group.g203.countables.path.detail.view.DetailActivity">
+
+    <RelativeLayout
+        android:id="@+id/llCountableInfo"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:background="@drawable/bright_green_border"
+        android:layout_marginTop="?android:attr/actionBarSize"
+        android:elevation="8dp"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/loading_countable_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tvCountableTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:ellipsize="end"
+            android:maxLines="2" />
+
+        <TextView
+            android:id="@+id/tvCompletedCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvCountableTitle"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:text="@string/completed_count" />
+
+    </RelativeLayout>
+
+    <group.g203.countables.custom_view.loading_view.LoadingAspect
+        android:id="@+id/loading_frame"
+        android:layout_above="@+id/llBottomNav"
+        android:layout_below="@+id/llCountableInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </group.g203.countables.custom_view.loading_view.LoadingAspect>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_above="@+id/llBottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/clSnackBar"/>
+
+    <LinearLayout
+        android:id="@+id/llBottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/gray_border"
+        android:elevation="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:id="@+id/llTimeLog"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".333"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/ivTimeLog"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:tint="@color/app_gray"
+                android:src="@mipmap/ic_clock"/>
+
+            <TextView
+                android:id="@+id/tvTimeLog"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/fallback_gray"
+                android:text="@string/time_log"/>
+            </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llAccountable"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".333"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/ivAccountable"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:tint="@color/fallback_gray"
+                android:src="@mipmap/ic_accountable"/>
+
+            <TextView
+                android:id="@+id/tvAccountable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/app_gray"
+                android:text="@string/accountability"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llReminder"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".333"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/ivReminder"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:tint="@color/fallback_gray"
+                android:src="@mipmap/ic_notification"/>
+
+            <TextView
+                android:id="@+id/tvReminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/app_gray"
+                android:text="@string/reminder"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

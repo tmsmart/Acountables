@@ -3,10 +3,12 @@
 
     <!--General Strings-->
     <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
     <string name="got_it">Got It</string>
 
     <!--Empty Strings-->
     <string name="no_countables">No Countables...</string>
+    <string name="never_completed">Countable never completed...</string>
 
     <!--Sort Dialog Strings-->
     <string name="sort">Sort</string>
@@ -25,9 +27,17 @@
     <!--Info Dialog Strings-->
     <string name="information">Information</string>
     <string name="welcome_title">Welcome To Countables!</string>
-    <string name="use_interface">- Use interface below to create events that you can keep count of the number of times you have done them (hereafter called Countables)</string>
+    <string name="main_screen_info">- Use this screen to create events that you can keep count of the number of times you have done them (hereafter called Countables)</string>
     <string name="on_countable_screen">- On this screen you can also delete (via swiping away Countable rows), sort (via the menu icon) and reorder Countables (via the green drag and drop indicator at the beginning of the row)</string>
     <string name="interact_countable">- To interact with and change a Countable simply click on it</string>
+
+    <string name="countable_detail_info">Countables Detail Info</string>
+    <string name="detail_screen_info">- Use this screen to edit the name of this Countable and modify and view your completions of this Countable.</string>
+    <string name="add_completion">- The Time Log section will allow you to see the dates and times you have completed this Countable event. Dates shown in green
+    are times where you accounted for your schedule while red dates are completions you did not peform on schedule. Times shown in black are times this event was
+    completed that are not part of your schedule.</string>
+    <string name="make_accountable">- The Accountable section allows you to create a recurring schedule for this event to hold yourself accountable to completing.</string>
+    <string name="set_reminder">- The Reminder section allows you to enable and disable a notification system to alert you to complete this Countable.</string>
 
     <!--Credits Dialog Strings-->
     <string name="credits">Credits</string>
@@ -37,8 +47,54 @@
     <string name="picasso">- Picasso</string>
     <string name="material_design_icons">- materialdesignicons.com</string>
 
-    <!--View Strings-->
+    <!--Edit Dialog Strings-->
+    <string name="edit">Edit</string>
+    <string name="edit_name">Edit Name</string>
+    <string name="edit_countable_name">Edit Countable Name</string>
+
+    <!--Delete Dialog Strings-->
+    <string name="delete">Delete</string>
+    <string name="delete_countable_title">Delete Countable?</string>
+    <string name="delete_countable">Delete Countable</string>
+
+    <!--EditTimeDialog Strings-->
+    <string name="delete_schedule">Delete Accountability Schedule?</string>
+    <string name="delete_reminder">Delete Reminder?</string>
+    <string name="edit_schedule">Edit Accountability Schedule?</string>
+    <string name="edit_schedule_msg">Note: Editing the Accountability Schedule will irreversibly reset your current schedule for this Countable with the new one provided. Would you like to continue?</string>
+    <string name="edit_reminder">Edit Reminder?</string>
+    <string name="edit_reminder_msg">Note: Editing the Notification Time will irreversibly reset the current notification time for this Countable with the new time provided. Would you like to continue?</string>
+    <string name="yes_edit">Continue with Edit</string>
+    <string name="editing_reminder">Now editing Reminder</string>
+    <string name="deleting_reminder">Reminder deleted successfully</string>
+    <string name="editing_schedule">Now editing Accountability Schedule</string>
+    <string name="deleting_schedule">Accountability Schedule deleted successfully</string>
+
+    <!--Main and Detail View Strings-->
     <string name="add_countable_hint">Create a Countable...</string>
+    <string name="completed_count">Completed Count:</string>
+    <string name="time_log">Time Log</string>
+    <string name="accountability">Accountability</string>
+    <string name="reminder">Reminder</string>
+
+   <!--Accountability Strings-->
+    <string name="enable_accountable">Enable Accountability Schedule</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="custom">Custom</string>
+    <string name="repeat_every">Repeat every</string>
+    <string name="days">days</string>
+    <item type="id" name="dateId"/>
+    <item type="id" name="dateFieldId"/>
+    <item type="id" name="selectedId"/>
+
+    <!--Reminder Strings-->
+    <string name="reminder_info">Reminders are based on your Accountability schedule and will be notifications sent to your phone at the time you request below.</string>
+    <string name="enable_reminder">Set Reminder</string>
+    <string name="time">Time</string>
+    <string name="colon">:</string>
+    <string name="am">AM</string>
+    <string name="pm">PM</string>
 
     <!--Error Strings-->
     <string name="general_error">An unexpected error occurred. Please try the previous action again.</string>
@@ -46,4 +102,6 @@
     <string name="view_error">An error occurred on the view. Please try the previous action again.</string>
     <string name="countables_error">An error occurred fetching your Countables. Please close the app and try again.</string>
     <string name="countables_sort_error">An error occurred sorting your Countables. Please close the app and try again.</string>
+    <string name="countable_edit_error">An unexpected error occurred editing your Countable. Please try the previous action again.</string>
+
 </resources>

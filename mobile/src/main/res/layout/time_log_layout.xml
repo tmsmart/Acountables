@@ -1,0 +1,49 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="group.g203.countables.path.detail.view.TimeLogFragment">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvTimeLog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <RelativeLayout
+        android:id="@+id/log_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/log_empty_icon"
+        android:layout_width="120px"
+        android:layout_height="120px"
+        android:tint="@color/app_gray"
+        android:src="@mipmap/ic_clock"
+        android:layout_centerInParent="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/log_empty_icon"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal"
+        android:textColor="@color/app_gray"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:text="@string/never_completed"/>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:src="@mipmap/ic_plus_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="4dp"
+        app:backgroundTint="@color/app_green"/>
+
+</FrameLayout>

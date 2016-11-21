@@ -14,5 +14,5 @@ public interface BasePresenter extends GeneralPresenter {
 
     void unbindModelsAndViews();
 
-    void displaySnackbarMessage(String errorMessage);
+    void displaySnackbarMessage(String message);
 }

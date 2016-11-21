@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import group.g203.countables.R;
+import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.view.BaseDialog;
 import group.g203.countables.path.main.presenter.CreditsDialogPresenter;
@@ -16,9 +17,11 @@ public class CreditsDialog extends BaseDialog {
 
     CreditsDialogPresenter mPresenter;
 
-    public static CreditsDialog getInstance() {
+    public static CreditsDialog getInstance(String tag) {
         CreditsDialog dialog = new CreditsDialog();
-        dialog.dialogTag = TAG;
+        Bundle bundle = new Bundle();
+        bundle.putString(Constants.DIALOG_TAG, tag);
+        dialog.setArguments(bundle);
         return dialog;
     }
 
@@ -31,6 +34,7 @@ public class CreditsDialog extends BaseDialog {
         setPresenterFromActivity();
         onSetTitle(builder, getString(R.string.credits));
         setPositiveButton(builder, getString(R.string.ok));
+        this.dialogTag = getArguments().getString(Constants.DIALOG_TAG);
         final AlertDialog creditsDialog = builder.create();
         return creditsDialog;
     }
@@ -46,7 +50,7 @@ public class CreditsDialog extends BaseDialog {
 
     @Override
     public void onSetTitle(AlertDialog.Builder builder, String title) {
-
+        mPresenter.setCreditsDialogTitle(builder, title);
     }
 
     @Override

@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="?android:attr/actionBarSize"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     tools:context="group.g203.countables.path.main.view.MainActivity"
     tools:showIn="@layout/activity_main">
 
@@ -22,7 +24,13 @@
 
         </group.g203.countables.custom_view.loading_view.LoadingAspect>
 
-        <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_above="@+id/llAddCountable"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/clSnack"/>
+
+    <LinearLayout
             android:id="@+id/llAddCountable"
             android:layout_width="match_parent"
             android:layout_height="48dp"
@@ -41,6 +49,8 @@
                 android:layout_weight="3"
                 android:background="@android:color/transparent"
                 android:hint="@string/add_countable_hint"
+                android:inputType="text"
+                android:maxLines="1"
                 android:paddingEnd="4dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="4dp"

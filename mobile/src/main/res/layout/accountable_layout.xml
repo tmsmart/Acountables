@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/switchView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
+                app:switchPadding="12dp" />
+
+            <LinearLayout
+                android:id="@+id/llIsSet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:weightSum="2">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:background="@drawable/thin_gray_transparent_border">
+
+                    <TextView
+                        android:id="@+id/tvDelete"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/delete"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textAllCaps="true"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:background="@drawable/thin_gray_transparent_border">
+
+                    <TextView
+                        android:id="@+id/tvEdit"
+                        android:layout_width="0dp"
+                        android:layout_height="36dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@string/edit"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textAllCaps="true"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <group.g203.countables.custom_view.week_view.DateRepeatAspect
+                android:id="@+id/dtrAspect"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

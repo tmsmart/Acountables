@@ -2,6 +2,7 @@ package group.g203.countables.path.main.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,13 +24,15 @@ import group.g203.countables.path.main.presenter.MainPresenter;
 public class MainActivity extends AppCompatActivity implements MainView {
 
     @Bind(R.id.loading_aspect)
-    public LoadingAspect mLoadingAspect;
+    LoadingAspect mLoadingAspect;
     @Bind(R.id.rvCountables)
     public RecyclerView mCountablesRv;
     @Bind(R.id.etCountable)
     public EditText mCountableField;
     @Bind(R.id.ivAddCountable)
     public ImageView mAddCountable;
+    @Bind(R.id.clSnack)
+    public CoordinatorLayout clSnack;
     public View mView;
     MainPresenter mPresenter;
 
