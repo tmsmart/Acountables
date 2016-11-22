@@ -56,6 +56,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         SortDialogPresenter, LoadingPresenter, CountableViewHolderPresenter, OnStartDragListener {
 
     private final static String NAME = "name";
+    private final static String ID = "id";
     private final static String EMPTY_DATE = "-- / -- / --";
     private final static String TIMES_COMPLETED = "timesCompleted";
     private final static String LAST_MODIFIED = "lastModified";
@@ -457,6 +458,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                 public void execute(Realm realm) {
                     final Countable addedCountable = realm.createObject(Countable.class);
                     addedCountable.name = countableName;
+                    addedCountable.id = realm.where(Countable.class).max(ID).intValue() + 1;
                     addedCountable.isAccountable = false;
                     addedCountable.isReminderEnabled = false;
                     addedCountable.timesCompleted = 0;
@@ -543,6 +545,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     Countable countable = getRealmInstance().createObject(Countable.class);
                     countable.name = tempCountable.name;
                     countable.index = tempCountable.index;
+                    countable.id = tempCountable.id;
                     countable.loggedDates = arrayListToDateRealmList(tempCountable.loggedDates, new RealmList<DateField>());
                     countable.accountableDates = arrayListToDateRealmList(tempCountable.accountableDates, new RealmList<DateField>());
                     countable.anchorDates = arrayListToDateRealmList(tempCountable.anchorDates, new RealmList<DateField>());

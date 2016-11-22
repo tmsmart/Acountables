@@ -73,6 +73,7 @@ public class CountablesApplication extends Application {
 
                 Countable countable = realm.createObject(Countable.class);
                 countable.name = "A Test";
+                countable.id = 2;
                 countable.index = 2;
                 countable.isAccountable = false;
                 countable.isReminderEnabled = false;
@@ -82,6 +83,7 @@ public class CountablesApplication extends Application {
 
                 Countable countable1 = realm.createObject(Countable.class);
                 countable1.name = "B Test";
+                countable1.id = 1;
                 countable1.index = 1;
                 countable1.isAccountable = false;
                 countable1.isReminderEnabled = true;
@@ -91,6 +93,7 @@ public class CountablesApplication extends Application {
 
                 Countable countable2 = realm.createObject(Countable.class);
                 countable2.name = "C Test";
+                countable2.id = 0;
                 countable2.index = 0;
                 countable2.isAccountable = true;
                 countable2.isReminderEnabled = false;
