@@ -6,6 +6,12 @@
         <item name="colorAccent">@color/bright_app_green</item>
     </style>
 
+    <style name="TimePickerTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/app_green</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

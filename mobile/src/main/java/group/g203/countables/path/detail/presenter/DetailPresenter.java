@@ -2,16 +2,19 @@ package group.g203.countables.path.detail.presenter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -19,12 +22,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Date;
+import java.util.HashSet;
 
 import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.manager.BaseDialogManager;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.utils.CalendarUtils;
+import group.g203.countables.base.utils.CollectionUtils;
 import group.g203.countables.base.utils.DisplayUtils;
 import group.g203.countables.base.view.BaseView;
 import group.g203.countables.custom_view.loading_view.LoadingAspect;
@@ -44,11 +49,16 @@ import group.g203.countables.path.main.view.InfoDialog;
 import io.realm.Realm;
 import io.realm.Sort;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+
 public class DetailPresenter implements BasePresenter, InfoDialogPresenter, DeleteDialogPresenter,
-        EditDialogPresenter, LoadingPresenter, DateViewHolderPresenter, TimeDialogPresenter {
+        EditDialogPresenter, LoadingPresenter, DateViewHolderPresenter, TimeDialogPresenter,
+        TimeSelectionDialogPresenter {
 
     private final static String COUNTABLE_DELETED = "Countable deleted successfully";
     private final static String COUNTABLE_EDITED = "Countable named edited successfully";
+
+    public int mNavIndex = DetailActivity.TIME_LOG_INDEX;
 
     Realm mRealm;
     DetailView mDetailView;
@@ -73,8 +83,14 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
     @Override
     public void bindModels() {
         getRealmInstance().beginTransaction();
-        mCountable = getRealmInstance().where(Countable.class).equalTo(Constants.INDEX,
-                ((DetailActivity) mDetailView).getIntent().getExtras().getInt(Constants.COUNTABLE_INDEX)).findFirst();
+        Bundle bundle = ((DetailActivity) mDetailView).getIntent().getExtras();
+        if (bundle.containsKey(Constants.COUNTABLE_ID)) {
+            mCountable = getRealmInstance().where(Countable.class).equalTo(Constants.ID,
+                    bundle.getInt(Constants.COUNTABLE_ID)).findFirst();
+        } else {
+            mCountable = getRealmInstance().where(Countable.class).equalTo(Constants.INDEX,
+                    bundle.getInt(Constants.COUNTABLE_INDEX)).findFirst();
+        }
         getRealmInstance().commitTransaction();
     }
 
@@ -225,7 +241,8 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
         }
 
         tvTitle.setText(mCountable.name);
-        setCompletedCount(Integer.toString(mCountable.loggedDates.size()));
+        setCompletedCount(Integer.toString(CalendarUtils.returnLoggedAndAccountableDates(mCountable.loggedDates,
+                mCountable.accountableDates).size()));
         displayNavFragContent(navIndex);
         mDetailView.setTimeLogClick();
         mDetailView.setReminderClick();
@@ -234,36 +251,37 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
         mInfoProgress.setVisibility(View.GONE);
         tvCount.setVisibility(View.VISIBLE);
         tvTitle.setVisibility(View.VISIBLE);
+        mNavIndex = navIndex;
     }
 
     public void displayTimeLog(FragmentManager fm) {
+        dismissKeyboard();
         displayLoading();
         String tag = TimeLogFragment.TAG;
-        showFragmentContent(TimeLogFragment.getInstance(tag,
-                ((DetailActivity) mDetailView).getIntent().getExtras().getInt(Constants.COUNTABLE_INDEX)),
-                tag, fm);
+        showFragmentContent(TimeLogFragment.getInstance(tag, getPassableIdOrIndex().first, getPassableIdOrIndex().second), tag, fm);
         handleBottomNavColorization(mTimeLogTv, mTimeLogIv, mReminderTv, mAccountableTv, mReminderIv, mAccountableIv);
         displayContent();
+        mNavIndex = DetailActivity.TIME_LOG_INDEX;
     }
 
     public void displayAccountableView(FragmentManager fm) {
+        dismissKeyboard();
         displayLoading();
         String tag = AccountableFragment.TAG;
-        showFragmentContent(AccountableFragment.getInstance(tag,
-                ((DetailActivity) mDetailView).getIntent().getExtras().getInt(Constants.COUNTABLE_INDEX)),
-                tag, fm);
+        showFragmentContent(AccountableFragment.getInstance(tag, getPassableIdOrIndex().first, getPassableIdOrIndex().second), tag, fm);
         handleBottomNavColorization(mAccountableTv, mAccountableIv, mTimeLogTv, mReminderTv, mTimeLogIv, mReminderIv);
         displayContent();
+        mNavIndex = DetailActivity.ACCOUNTABLE_INDEX;
     }
 
     public void displayReminderView(FragmentManager fm) {
+        dismissKeyboard();
         displayLoading();
         String tag = ReminderFragment.TAG;
-        showFragmentContent(ReminderFragment.getInstance(tag,
-                ((DetailActivity) mDetailView).getIntent().getExtras().getInt(Constants.COUNTABLE_INDEX)),
-                tag, fm);
+        showFragmentContent(ReminderFragment.getInstance(tag, getPassableIdOrIndex().first, getPassableIdOrIndex().second), tag, fm);
         handleBottomNavColorization(mReminderTv, mReminderIv, mTimeLogTv, mAccountableTv, mTimeLogIv, mAccountableIv);
         displayContent();
+        mNavIndex = DetailActivity.REMINDER_INDEX;
     }
 
     public void setTimeLogClick(final FragmentManager fm) {
@@ -293,8 +311,7 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
         });
     }
 
-    void displayNavFragContent(int navIndex) {
-        FragmentManager fm = ((DetailActivity) mDetailView).getSupportFragmentManager();
+    public void displayNavFragContent(int navIndex) {
         switch (navIndex) {
             case DetailActivity.TIME_LOG_INDEX:
                 mDetailView.displayTimeLog();
@@ -402,7 +419,18 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
 
     @Override
     public void handleDateColor(TextView textView) {
-
+        Date date = CalendarUtils.englishToDate(textView.getText().toString());
+        if (mCountable.isAccountable) {
+            if (!CollectionUtils.isEmpty(mCountable.accountableDates, true)) {
+                HashSet<String> dateList = CalendarUtils.getMonthDateYearDashedSet(mCountable.accountableDates);
+                if (dateList.contains(CalendarUtils.getMonthDateYearDashedString(
+                        CalendarUtils.englishToDate(textView.getText().toString())))) {
+                    textView.setTextColor(ContextCompat.getColor(mContext, R.color.app_green));
+                } else if (CalendarUtils.realmListToDateArrayList(mCountable.accountableDates).contains(date)) {
+                    textView.setTextColor(ContextCompat.getColor(mContext, android.R.color.holo_red_dark));
+                }
+            }
+        }
     }
 
     void handleNavSelectionColor(View... views) {
@@ -492,5 +520,48 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
                 }
             }
         });
+    }
+
+    @Override
+    public void setNotificationTime(FragmentManager fm, int hour, int mins) {
+        ReminderFragment fragment = (ReminderFragment) fm.findFragmentByTag(ReminderFragment.TAG);
+        String minsVal = Integer.toString(mins);
+        if (fragment != null) {
+            if (hour < Constants.HOURS_MAX) {
+                if (hour == Constants.ZERO) {
+                    hour = Constants.HOURS_MAX;
+                }
+                fragment.tvAmPm.setText(mContext.getString(R.string.am));
+            } else {
+                if (hour > Constants.HOURS_MAX) {
+                    hour = hour - Constants.HOURS_MAX;
+                }
+                fragment.tvAmPm.setText(mContext.getString(R.string.pm));
+            }
+            if (minsVal.length() == Constants.ONE) {
+                minsVal = Constants.ZERO_STRING + minsVal;
+            }
+            fragment.tvMins.setText(minsVal);
+            fragment.tvHours.setText(Integer.toString(hour));
+        } else {
+            DisplayUtils.displayToast(mContext, mContext.getString(R.string.countable_edit_error), Toast.LENGTH_SHORT);
+        }
+
+    }
+
+    Pair<String, Integer> getPassableIdOrIndex() {
+        Bundle bundle = ((DetailActivity) mDetailView).getIntent().getExtras();
+        if (bundle.containsKey(Constants.COUNTABLE_ID)) {
+            return new Pair<>(Constants.COUNTABLE_ID, bundle.getInt(Constants.COUNTABLE_ID));
+        } else {
+            return new Pair<>(Constants.COUNTABLE_INDEX, bundle.getInt(Constants.COUNTABLE_INDEX));
+        }
+    }
+
+    void dismissKeyboard() {
+        if (((DetailActivity) mDetailView).getCurrentFocus() != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(((DetailActivity) mDetailView).getCurrentFocus().getWindowToken(), 0);
+        }
     }
 }

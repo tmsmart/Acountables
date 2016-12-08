@@ -1,6 +1,7 @@
 package group.g203.countables.path.detail.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.NavUtils;
@@ -74,8 +75,12 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
         toolbar.setSubtitle(Constants.EMPTY_STRING);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setPresenterFromState(savedInstanceState);
+    }
+
+    protected void onNewIntent(Intent intent) {
+        this.setIntent(intent);
         setPresenter(new DetailPresenter());
-        setInitialCountableInfo();
     }
 
     @Override
@@ -102,6 +107,7 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
     @Override
     public void onResume() {
         super.onResume();
+        setInitialCountableInfo(mPresenter.mNavIndex);
     }
 
     @Override
@@ -150,8 +156,16 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
     }
 
     @Override
-    public void setInitialCountableInfo() {
-        mPresenter.handleInitDisplay(TIME_LOG_INDEX);
+    public void setInitialCountableInfo(int navIndex) {
+        mPresenter.handleInitDisplay(navIndex);
+    }
+
+    void setPresenterFromState(Bundle savedState) {
+        if (savedState != null) {
+            setPresenter(BasePresenterManager.getInstance().getPresenter(savedState));
+        } else {
+            setPresenter(new DetailPresenter());
+        }
     }
 
     @Override

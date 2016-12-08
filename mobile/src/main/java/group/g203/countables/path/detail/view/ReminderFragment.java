@@ -3,12 +3,11 @@ package group.g203.countables.path.detail.view;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatRadioButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -35,23 +34,24 @@ public class ReminderFragment extends Fragment implements ReminderView {
     public TextView tvEdit;
     @Bind(R.id.llTime)
     public LinearLayout llTime;
-    @Bind(R.id.rbAm)
-    public AppCompatRadioButton rbAm;
-    @Bind(R.id.rbPm)
-    public AppCompatRadioButton rbPm;
-    @Bind(R.id.etHours)
-    public EditText etHours;
-    @Bind(R.id.etMins)
-    public EditText etMins;
-
+    @Bind(R.id.tvTime)
+    public TextView tvTime;
+    @Bind(R.id.tvMins)
+    public TextView tvMins;
+    @Bind(R.id.tvHours)
+    public TextView tvHours;
+    @Bind(R.id.tvAmPm)
+    public TextView tvAmPm;
+    @Bind(R.id.tvColon)
+    public TextView tvColon;
     public View mView;
     ReminderPresenter mPresenter;
 
-    public static ReminderFragment getInstance(String tag, int countableIndex) {
+    public static ReminderFragment getInstance(String tag, String bundleArg, int bundleKey) {
         ReminderFragment frag = new ReminderFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DIALOG_TAG, tag);
-        bundle.putInt(Constants.COUNTABLE_INDEX, countableIndex);
+        bundle.putInt(bundleArg, bundleKey);
         frag.setArguments(bundle);
         return frag;
     }
@@ -114,5 +114,14 @@ public class ReminderFragment extends Fragment implements ReminderView {
     @Override
     public ReminderPresenter getPresenter() {
         return mPresenter;
+    }
+
+    public void onPause() {
+        super.onPause();
+        int activeColorInt = ContextCompat.getColor(getActivity(), R.color.bright_app_green);
+        if (tvAmPm.getCurrentTextColor() == activeColorInt && tvHours.getCurrentTextColor() == activeColorInt &&
+                tvMins.getCurrentTextColor() == activeColorInt) {
+            mPresenter.saveReminderTime(tvAmPm.getText().toString().equals(getString(R.string.am)));
+        }
     }
 }

@@ -5,19 +5,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import group.g203.countables.R;
 import group.g203.countables.base.utils.CollectionUtils;
-import group.g203.countables.model.DateField;
 import group.g203.countables.path.detail.presenter.DateViewHolderPresenter;
-import io.realm.RealmList;
 
 public class DateAdapter extends RecyclerView.Adapter<DateViewHolder> {
 
-    private RealmList<DateField> mDataModels;
+    private ArrayList<Date> mDates;
     DateViewHolderPresenter mPresenter;
 
-    public DateAdapter(RealmList<DateField> dates) {
-        mDataModels = dates;
+    public DateAdapter(ArrayList<Date> dates) {
+        mDates = dates;
     }
 
     @Override
@@ -31,17 +32,17 @@ public class DateAdapter extends RecyclerView.Adapter<DateViewHolder> {
     @Override
     public void onBindViewHolder(DateViewHolder holder, int position) {
         setPresenter(holder);
+        mPresenter.setDateFormat(holder.tvDate, mDates.get(position));
         mPresenter.handleDateColor(holder.tvDate);
-        mPresenter.setDateFormat(holder.tvDate, mDataModels.get(position).date);
     }
 
     @Override
     public int getItemCount() {
-        return (CollectionUtils.isEmpty(mDataModels, true)) ? 0 : mDataModels.size();
+        return (CollectionUtils.isEmpty(mDates, true)) ? 0 : mDates.size();
     }
 
-    public void setData(RealmList<DateField> mDataModels) {
-        this.mDataModels = mDataModels;
+    public void setData(ArrayList<Date> mDataModels) {
+        this.mDates = mDataModels;
     }
 
     void setPresenter(DateViewHolder holder) {

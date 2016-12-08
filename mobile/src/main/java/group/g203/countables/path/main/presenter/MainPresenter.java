@@ -28,6 +28,7 @@ import java.util.List;
 import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.manager.BaseDialogManager;
+import group.g203.countables.base.manager.BaseTimingManager;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.utils.CalendarUtils;
 import group.g203.countables.base.utils.CollectionUtils;
@@ -76,20 +77,20 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     private final static int EMPTY_ICON_DIMEN = 120;
     private final static int MAX_COUNTABLE_NAME_CHARS = 86;
 
-    Realm mRealm;
-    MainView mMainView;
-    CoordinatorLayout mSnackLayout;
-    LoadingAspect mLoadingAspect;
-    RecyclerView mCountablesRv;
-    CountableAdapter mAdapter;
-    ItemTouchHelper mTouchHelper;
-    InfoDialog mInfoDialog;
-    CreditsDialog mCreditsDialog;
-    SortDialog mSortDialog;
-    EditText mCountableField;
-    ImageView mAddCountable;
-    Context mContext;
-    Snackbar mSnackbar;
+    public Realm mRealm;
+    public MainView mMainView;
+    public CoordinatorLayout mSnackLayout;
+    public LoadingAspect mLoadingAspect;
+    public RecyclerView mCountablesRv;
+    public CountableAdapter mAdapter;
+    public ItemTouchHelper mTouchHelper;
+    public InfoDialog mInfoDialog;
+    public CreditsDialog mCreditsDialog;
+    public SortDialog mSortDialog;
+    public EditText mCountableField;
+    public ImageView mAddCountable;
+    public Context mContext;
+    public Snackbar mSnackbar;
 
     @Override
     public void bindModels() {
@@ -496,6 +497,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         getRealmInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                BaseTimingManager.getInstance(mContext).cancelTimeBasedAction(countable);
                 countable.deleteFromRealm();
 
                 RealmResults<Countable> countables = realm.where(Countable.class).findAll();
