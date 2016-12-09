@@ -1,6 +1,7 @@
 package group.g203.countables.path.detail.presenter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,10 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.BasePresenter;
+import group.g203.countables.base.utils.CalendarUtils;
 import group.g203.countables.base.utils.CollectionUtils;
 import group.g203.countables.base.utils.DisplayUtils;
 import group.g203.countables.base.view.BaseView;
@@ -23,7 +26,6 @@ import group.g203.countables.path.detail.view.DetailActivity;
 import group.g203.countables.path.detail.view.TimeLogFragment;
 import group.g203.countables.path.detail.view.TimeLogView;
 import io.realm.Realm;
-import io.realm.RealmList;
 
 public class TimeLogPresenter implements BasePresenter {
 
@@ -45,8 +47,14 @@ public class TimeLogPresenter implements BasePresenter {
     @Override
     public void bindModels() {
         getRealmInstance().beginTransaction();
-        mCountable = getRealmInstance().where(Countable.class).equalTo(Constants.INDEX,
-                ((TimeLogFragment) mTimeLogView).getArguments().getInt(Constants.COUNTABLE_INDEX)).findFirst();
+        Bundle bundle = ((TimeLogFragment) mTimeLogView).getArguments();
+        if (bundle.containsKey(Constants.COUNTABLE_ID)) {
+            mCountable = getRealmInstance().where(Countable.class).equalTo(Constants.ID,
+                    bundle.getInt(Constants.COUNTABLE_ID)).findFirst();
+        } else {
+            mCountable = getRealmInstance().where(Countable.class).equalTo(Constants.INDEX,
+                    bundle.getInt(Constants.COUNTABLE_INDEX)).findFirst();
+        }
         getRealmInstance().commitTransaction();
     }
 
@@ -97,15 +105,18 @@ public class TimeLogPresenter implements BasePresenter {
     }
 
     public void handleInitialContentDisplay() {
-        setupTimeLogRv(mCountable.loggedDates);
-        if (!CollectionUtils.isEmpty(mCountable.loggedDates, true)) {
+        modelSanityCheck();
+        ArrayList<Date> dateData = CalendarUtils.returnLoggedAndAccountableDates(mCountable.loggedDates,
+                mCountable.accountableDates);
+        setupTimeLogRv(dateData);
+        if (!CollectionUtils.isEmpty(dateData, false)) {
             mEmptyView.setVisibility(View.GONE);
         } else {
             mEmptyView.setVisibility(View.VISIBLE);
         }
     }
 
-    void setupTimeLogRv(RealmList<DateField> dates) {
+    void setupTimeLogRv(ArrayList<Date> dates) {
         mTimeLogRv.setLayoutManager(new LinearLayoutManager(mContext));
         mAdapter = new DateAdapter(dates);
         mTimeLogRv.setAdapter(mAdapter);
@@ -130,7 +141,8 @@ public class TimeLogPresenter implements BasePresenter {
 
                 getRealmInstance().commitTransaction();
 
-                mAdapter.setData(mCountable.loggedDates);
+                mAdapter.setData(CalendarUtils.returnLoggedAndAccountableDates(mCountable.loggedDates,
+                        mCountable.accountableDates));
                 mAdapter.notifyDataSetChanged();
                 mTimeLogRv.smoothScrollToPosition(mCountable.loggedDates.size() - 1);
 
@@ -151,7 +163,8 @@ public class TimeLogPresenter implements BasePresenter {
 
                                 getRealmInstance().commitTransaction();
 
-                                mAdapter.setData(mCountable.loggedDates);
+                                mAdapter.setData(CalendarUtils.returnLoggedAndAccountableDates(mCountable.loggedDates,
+                                        mCountable.accountableDates));
                                 mAdapter.notifyDataSetChanged();
 
                                 if (!CollectionUtils.isEmpty(mCountable.loggedDates, true)) {
@@ -164,5 +177,11 @@ public class TimeLogPresenter implements BasePresenter {
                         }, null);
             }
         });
+    }
+
+    void modelSanityCheck() {
+        if (mCountable == null) {
+            bindModels();
+        }
     }
 }

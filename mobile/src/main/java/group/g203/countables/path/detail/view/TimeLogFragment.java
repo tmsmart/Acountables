@@ -31,11 +31,11 @@ public class TimeLogFragment extends Fragment implements TimeLogView {
     public CompleteCountListener mListener;
     TimeLogPresenter mPresenter;
 
-    public static TimeLogFragment getInstance(String tag, int countableIndex) {
+    public static TimeLogFragment getInstance(String tag, String bundleArg, int bundleKey) {
         TimeLogFragment frag = new TimeLogFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DIALOG_TAG, tag);
-        bundle.putInt(Constants.COUNTABLE_INDEX, countableIndex);
+        bundle.putInt(bundleArg, bundleKey);
         frag.setArguments(bundle);
         return frag;
     }

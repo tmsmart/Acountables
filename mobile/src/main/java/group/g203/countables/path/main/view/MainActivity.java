@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setPresenter(new MainPresenter());
+        setPresenterFromState(savedInstanceState);
         setEmptyParams();
         handleContentDisplay();
     }
@@ -73,6 +73,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Override
     public void onResume() {
         super.onResume();
+        if (mPresenter.mAdapter != null) {
+            mPresenter.mAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -93,6 +96,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Override
     public void displayCreditsDialog() {
         mPresenter.displayCreditsDialog(getSupportFragmentManager());
+    }
+
+    void setPresenterFromState(Bundle savedState) {
+        if (savedState != null) {
+            setPresenter(BasePresenterManager.getInstance().getPresenter(savedState));
+        } else {
+            setPresenter(new MainPresenter());
+        }
     }
 
     @Override

@@ -8,6 +8,7 @@ import io.realm.RealmObject;
 public class Countable extends RealmObject {
 
     public String name;
+    public int id;
     public int index;
     public RealmList<DateField> loggedDates;
     public int timesCompleted;

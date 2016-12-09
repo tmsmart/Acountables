@@ -8,7 +8,11 @@ public class Constants {
 
     public static final String SPACE = " ";
 
+    public static final String DASH = "-";
+
     public static final String EMPTY_STRING = "";
+
+    public static final String PRESENTER_KEY = "presenterKey";
 
     public static final String COUNTABLE_INDEX = "countableIndex";
 
@@ -24,7 +28,15 @@ public class Constants {
 
     public static final String COUNTABLE_NAME = "countableName";
 
+    public static final String COUNTABLE_ID = "countableId";
+
+    public static final String NOTIFICATION_IDS = "notificationIds";
+
+    public static final String DATE_INDEX = "dateIndex";
+
     public static final String ZERO_STRING = "0";
+
+    public static final int NEG_ONE = -1;
 
     public static final int ZERO = 0;
 
@@ -38,4 +50,5 @@ public class Constants {
 
     public final static String INDEX = "index";
 
+    public final static String ID = "id";
 }

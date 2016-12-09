@@ -22,5 +22,5 @@ public interface DetailView extends BaseView {
 
     void displayEditDialog();
 
-    void setInitialCountableInfo();
+    void setInitialCountableInfo(int navIndex);
 }

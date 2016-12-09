@@ -35,11 +35,11 @@ public class AccountableFragment extends Fragment implements AccountableView {
     public View mView;
     AccountablePresenter mPresenter;
 
-    public static AccountableFragment getInstance(String tag, int countableIndex) {
+    public static AccountableFragment getInstance(String tag, String bundleArg, int bundleKey) {
         AccountableFragment frag = new AccountableFragment();
         Bundle bundle = new Bundle();
         bundle.putString(Constants.DIALOG_TAG, tag);
-        bundle.putInt(Constants.COUNTABLE_INDEX, countableIndex);
+        bundle.putInt(bundleArg, bundleKey);
         frag.setArguments(bundle);
         return frag;
     }

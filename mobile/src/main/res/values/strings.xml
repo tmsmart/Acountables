@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Countables</string>
+    <string name="pref_file_key">group.g203.countables.pref_key</string>
 
     <!--General Strings-->
     <string name="ok">Ok</string>
@@ -57,11 +58,11 @@
     <string name="delete_countable_title">Delete Countable?</string>
     <string name="delete_countable">Delete Countable</string>
 
-    <!--EditTimeDialog Strings-->
+    <!--Edit Time Dialog Strings-->
     <string name="delete_schedule">Delete Accountability Schedule?</string>
     <string name="delete_reminder">Delete Reminder?</string>
     <string name="edit_schedule">Edit Accountability Schedule?</string>
-    <string name="edit_schedule_msg">Note: Editing the Accountability Schedule will irreversibly reset your current schedule for this Countable with the new one provided. Would you like to continue?</string>
+    <string name="edit_schedule_msg">Note: Editing the Accountability Schedule will irreversibly reset your current schedule and notification time for this Countable with the new ones to be provided. Would you like to continue?</string>
     <string name="edit_reminder">Edit Reminder?</string>
     <string name="edit_reminder_msg">Note: Editing the Notification Time will irreversibly reset the current notification time for this Countable with the new time provided. Would you like to continue?</string>
     <string name="yes_edit">Continue with Edit</string>
@@ -69,6 +70,9 @@
     <string name="deleting_reminder">Reminder deleted successfully</string>
     <string name="editing_schedule">Now editing Accountability Schedule</string>
     <string name="deleting_schedule">Accountability Schedule deleted successfully</string>
+
+    <!--Time Selection Dialog Strings-->
+    <string name="default_time">12:00</string>
 
     <!--Main and Detail View Strings-->
     <string name="add_countable_hint">Create a Countable...</string>
@@ -89,8 +93,9 @@
     <item type="id" name="selectedId"/>
 
     <!--Reminder Strings-->
-    <string name="reminder_info">Reminders are based on your Accountability schedule and will be notifications sent to your phone at the time you request below.</string>
+    <string name="reminder_info">Reminders are based on your Accountability schedule and will be notifications sent to your phone around the time you request below.</string>
     <string name="enable_reminder">Set Reminder</string>
+    <string name="multiple_reminders">multipleReminders</string>
     <string name="time">Time</string>
     <string name="colon">:</string>
     <string name="am">AM</string>

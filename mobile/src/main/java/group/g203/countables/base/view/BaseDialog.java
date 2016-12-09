@@ -1,5 +1,6 @@
 package group.g203.countables.base.view;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -12,7 +13,7 @@ public abstract class BaseDialog extends DialogFragment implements BaseDialogVie
     public DialogInterface.OnDismissListener onDismissListener;
 
     @Override
-    public AlertDialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         builder = dialogBuilder;
         alertDialog = dialogBuilder.create();

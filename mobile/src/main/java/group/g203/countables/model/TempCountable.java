@@ -9,6 +9,7 @@ import io.realm.RealmList;
 public class TempCountable {
 
     public String name;
+    public int id;
     public int index;
     public ArrayList<Date> loggedDates;
     public int timesCompleted;
@@ -19,11 +20,12 @@ public class TempCountable {
     public ArrayList<Date> anchorDates;
     public int dayRepeater;
 
-    public TempCountable(String name, int index, ArrayList<Date> loggedDates, int timesCompleted,
+    public TempCountable(String name, int index, int id, ArrayList<Date> loggedDates, int timesCompleted,
                          Date lastModified, boolean isAccountable, ArrayList<Date> accountableDates,
                          boolean isReminderEnabled, ArrayList<Date> anchorDates, int dayRepeater) {
         this.name = name;
         this.index = index;
+        this.id = id;
         this.loggedDates = loggedDates;
         this.timesCompleted = timesCompleted;
         this.lastModified = lastModified;
@@ -39,7 +41,7 @@ public class TempCountable {
         ArrayList<Date> accountableDates = dateRealmListToArrayList(countable.accountableDates);
         ArrayList<Date> anchorDates = dateRealmListToArrayList(countable.anchorDates);
 
-        return new TempCountable(countable.name, countable.index, dates, countable.timesCompleted,
+        return new TempCountable(countable.name, countable.index, countable.id, dates, countable.timesCompleted,
                 countable.lastModified, countable.isAccountable, accountableDates,
                 countable.isReminderEnabled, anchorDates, countable.dayRepeater);
     }

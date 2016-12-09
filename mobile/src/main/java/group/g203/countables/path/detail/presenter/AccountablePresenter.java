@@ -1,6 +1,7 @@
 package group.g203.countables.path.detail.presenter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatRadioButton;
 import android.support.v7.widget.SwitchCompat;
@@ -21,6 +22,7 @@ import java.util.HashSet;
 import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.manager.BaseDialogManager;
+import group.g203.countables.base.manager.BaseTimingManager;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.utils.CalendarUtils;
 import group.g203.countables.base.utils.CollectionUtils;
@@ -59,8 +61,14 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
     @Override
     public void bindModels() {
         getRealmInstance().beginTransaction();
-        mCountable = getRealmInstance().where(Countable.class).equalTo(Constants.INDEX,
-                ((AccountableFragment) mAccountableView).getArguments().getInt(Constants.COUNTABLE_INDEX)).findFirst();
+        Bundle bundle = ((AccountableFragment) mAccountableView).getArguments();
+        if (bundle.containsKey(Constants.COUNTABLE_ID)) {
+            mCountable = getRealmInstance().where(Countable.class).equalTo(Constants.ID,
+                    bundle.getInt(Constants.COUNTABLE_ID)).findFirst();
+        } else {
+            mCountable = getRealmInstance().where(Countable.class).equalTo(Constants.INDEX,
+                    bundle.getInt(Constants.COUNTABLE_INDEX)).findFirst();
+        }
         getRealmInstance().commitTransaction();
     }
 
@@ -114,11 +122,12 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
         modelSanityCheck();
         getRealmInstance().beginTransaction();
         mCountable.isAccountable = true;
-
         handleRadioButtonsState(true,
                 mAspect.rbCustom, mAspect.rbDaily, mAspect.rbWeekly);
         setRepeatOptionClicks();
         getRealmInstance().commitTransaction();
+
+        doTimeAction();
     }
 
     @Override
@@ -129,6 +138,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
             mCountable.isAccountable = false;
             getRealmInstance().commitTransaction();
 
+            doTimeAction();
             ((TextView) mAspect.llRepeat.getChildAt(1)).setText(Constants.ZERO_STRING);
         }
 
@@ -194,6 +204,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
                     getRealmInstance().beginTransaction();
                     mCountable.dayRepeater = Constants.ONE;
                     getRealmInstance().commitTransaction();
+                    doTimeAction();
                     selectAllForDaily();
                     handleRepeatDisplay(false);
                 }
@@ -206,6 +217,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
                     getRealmInstance().beginTransaction();
                     mCountable.dayRepeater = CalendarUtils.WEEK_LENGTH;
                     getRealmInstance().commitTransaction();
+                    doTimeAction();
                     unselectAllForDaily();
                     handleRepeatDisplay(false);
                     handleDayClicks(true);
@@ -288,6 +300,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
                     getRealmInstance().beginTransaction();
                     mCountable.isAccountable = true;
                     getRealmInstance().commitTransaction();
+                    doTimeAction();
                     setActiveAspect();
                 } else {
                     getRealmInstance().beginTransaction();
@@ -295,7 +308,9 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
                     mCountable.anchorDates = null;
                     mCountable.dayRepeater = 0;
                     getRealmInstance().commitTransaction();
+                    doTimeAction();
                     setReadOnlyAspect(true);
+                    mAspect.rgOptions.clearCheck();
                 }
             }
         });
@@ -372,12 +387,14 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
                     mCountable.anchorDates.add(dateField);
                 }
                 getRealmInstance().commitTransaction();
+                doTimeAction();
             } else {
                 layout.setOnTouchListener(null);
                 modelSanityCheck();
                 getRealmInstance().beginTransaction();
                 mCountable.anchorDates = null;
                 getRealmInstance().commitTransaction();
+                doTimeAction();
             }
         }
     }
@@ -475,6 +492,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
                             }
                         }
                         getRealmInstance().commitTransaction();
+                        doTimeAction();
                     }
                 });
             }
@@ -530,6 +548,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
                         getRealmInstance().beginTransaction();
                         mCountable.dayRepeater = Integer.parseInt(etRepeat.getText().toString());
                         getRealmInstance().commitTransaction();
+                        doTimeAction();
                     }
                 }
             });
@@ -545,7 +564,9 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
         getRealmInstance().beginTransaction();
         mCountable.anchorDates = null;
         mCountable.dayRepeater = 0;
+        mCountable.isReminderEnabled = false;
         getRealmInstance().commitTransaction();
+        doTimeAction();
 
         setDays();
         setActiveAspect();
@@ -555,6 +576,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
             getRealmInstance().beginTransaction();
             mCountable.dayRepeater = Constants.ONE;
             getRealmInstance().commitTransaction();
+            doTimeAction();
             selectAllForDaily();
             handleRepeatDisplay(false);
         }
@@ -564,6 +586,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
             getRealmInstance().beginTransaction();
             mCountable.dayRepeater = CalendarUtils.WEEK_LENGTH;
             getRealmInstance().commitTransaction();
+            doTimeAction();
             unselectAllForDaily();
             handleRepeatDisplay(false);
             handleDayClicks(true);
@@ -587,6 +610,7 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
         mCountable.dayRepeater = 0;
         mCountable.isReminderEnabled = false;
         getRealmInstance().commitTransaction();
+        doTimeAction();
 
         mIsSetLayout.setVisibility(View.GONE);
         mSwitch.setVisibility(View.VISIBLE);
@@ -609,5 +633,9 @@ public class AccountablePresenter implements BasePresenter, DateRepeatPresenter 
         etRepeat.setText(Integer.toString(mCountable.dayRepeater));
         ((TextView) mAspect.llRepeat.getChildAt(0)).setTextColor(colorInt);
         ((TextView) mAspect.llRepeat.getChildAt(2)).setTextColor(colorInt);
+    }
+
+    void doTimeAction() {
+        BaseTimingManager.getInstance(mContext).setTimeBasedAction(mCountable);
     }
 }
