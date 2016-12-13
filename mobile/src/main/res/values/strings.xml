@@ -45,6 +45,7 @@
     <string name="butterknife">- Butter Knife</string>
     <string name="joda_time">- Joda-Time</string>
     <string name="realm">- Realm</string>
+    <string name="gson">- Gson</string>
     <string name="picasso">- Picasso</string>
     <string name="material_design_icons">- materialdesignicons.com</string>
 

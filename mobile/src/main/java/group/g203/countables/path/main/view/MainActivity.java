@@ -2,6 +2,8 @@ package group.g203.countables.path.main.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +15,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.Wearable;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import group.g203.countables.R;
@@ -21,7 +29,9 @@ import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.custom_view.loading_view.LoadingAspect;
 import group.g203.countables.path.main.presenter.MainPresenter;
 
-public class MainActivity extends AppCompatActivity implements MainView {
+public class MainActivity extends AppCompatActivity implements MainView, DataApi.DataListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     @Bind(R.id.loading_aspect)
     LoadingAspect mLoadingAspect;
@@ -34,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Bind(R.id.clSnack)
     public CoordinatorLayout clSnack;
     public View mView;
+    public GoogleApiClient mGoogleApiClient;
     MainPresenter mPresenter;
 
     @Override
@@ -75,6 +86,18 @@ public class MainActivity extends AppCompatActivity implements MainView {
         super.onResume();
         if (mPresenter.mAdapter != null) {
             mPresenter.mAdapter.notifyDataSetChanged();
+        }
+        if (mGoogleApiClient != null && !mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting()) {
+            mGoogleApiClient.connect();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting()) {
+            Wearable.DataApi.removeListener(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
         }
     }
 
@@ -130,5 +153,25 @@ public class MainActivity extends AppCompatActivity implements MainView {
     public void setEmptyParams() {
         mPresenter.setEmptyIcon(R.mipmap.ic_empty_file);
         mPresenter.setEmptyMessage(getString(R.string.no_countables));
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mPresenter.handleApiClientConnection(bundle);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mPresenter.handleApiClientSuspension(i);
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        mPresenter.handleApiClientConnectFail(connectionResult);
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+        mPresenter.handleDataChange(dataEventBuffer);
     }
 }
