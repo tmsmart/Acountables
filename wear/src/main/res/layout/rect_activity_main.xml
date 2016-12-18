@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="group.g203.countables.MainActivity"
+    tools:context="group.g203.countables.path.main.view.MainActivity"
     tools:deviceIds="wear_square">
 
     <TextView

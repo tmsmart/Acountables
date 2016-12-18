@@ -1,9 +1,11 @@
-package group.g203.countables;
+package group.g203.countables.path.main.view;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.wearable.view.WatchViewStub;
 import android.widget.TextView;
+
+import group.g203.countables.R;
 
 public class MainActivity extends Activity {
 
