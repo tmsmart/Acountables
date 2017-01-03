@@ -1,15 +1,15 @@
-package group.g203.countables.path.main.view;
+package group.g203.countables.path.detail.view;
 
 import android.os.Bundle;
 
 import group.g203.countables.base.view.BaseActivity;
-import group.g203.countables.path.main.presenter.MainPresenter;
+import group.g203.countables.path.detail.presenter.DetailPresenter;
 
-public class MainActivity extends BaseActivity {
+public class DetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setPresenter(new MainPresenter());
+        setPresenter(new DetailPresenter());
         handleContentDisplay();
     }
 }

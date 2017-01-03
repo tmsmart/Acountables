@@ -8,12 +8,15 @@ public class Constants {
     public static final String COUNTABLE_INDEX = "countableIndex";
     public static final String DATEFIELD_DATE = "dateFieldDate";
     public static final String LOGGED_DATES = "loggedDates";
-    public final static String TIMES_COMPLETED = "timesCompleted";
-    public final static String LAST_MODIFIED = "lastModified";
-    public final static String IS_ACCOUNTABLE = "isAccountable";
+    public static final String TIMES_COMPLETED = "timesCompleted";
+    public static final String LAST_MODIFIED = "lastModified";
+    public static final String IS_ACCOUNTABLE = "isAccountable";
     public static final String ACCOUNTABLE_DATES = "accountableDates";
-    public final static String IS_REMINDER = "isReminder";
+    public static final String IS_REMINDER = "isReminder";
     public static final String ANCHOR_DATES = "anchorDates";
-    public final static String DAY_REPEATER = "dayRepeater";
+    public static final String DAY_REPEATER = "dayRepeater";
 
+    public static final String MAIN = "main";
+    public static final String DETAIL = "detail";
+    public static final String COUNTABLE = "countable";
 }

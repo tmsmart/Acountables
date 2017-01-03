@@ -1,0 +1,26 @@
+<group.g203.countables.custom_view.wear_recycler_view.WearListAspect
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp">
+    <android.support.wearable.view.CircledImageView
+        android:id="@+id/ivIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:circle_border_width="0dp"
+        app:circle_color="@color/app_green"
+        app:circle_radius="22dp" />
+    <TextView
+        android:id="@+id/tvName"
+        android:background="@color/white"
+        android:gravity="center_vertical|left"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="-4sp"
+        android:textColor="@color/dark_app_gray"
+        android:textSize="16sp"/>
+</group.g203.countables.custom_view.wear_recycler_view.WearListAspect>

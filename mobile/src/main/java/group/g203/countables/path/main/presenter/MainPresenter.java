@@ -2,8 +2,6 @@ package group.g203.countables.path.main.presenter;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -21,25 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.wearable.DataApi;
-import com.google.android.gms.wearable.DataEvent;
-import com.google.android.gms.wearable.DataEventBuffer;
-import com.google.android.gms.wearable.DataItem;
-import com.google.android.gms.wearable.DataMap;
-import com.google.android.gms.wearable.DataMapItem;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
-import com.google.android.gms.wearable.Wearable;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Picasso;
-
-import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,9 +41,6 @@ import group.g203.countables.custom_view.loading_view.LoadingPresenter;
 import group.g203.countables.model.Countable;
 import group.g203.countables.model.DateField;
 import group.g203.countables.model.TempCountable;
-import group.g203.countables.model.serializer.CountableSerializer;
-import group.g203.countables.model.serializer.DateFieldSerializer;
-import group.g203.countables.model.serializer.DateTimeSerializer;
 import group.g203.countables.path.main.view.CountableAdapter;
 import group.g203.countables.path.main.view.CreditsDialog;
 import group.g203.countables.path.main.view.InfoDialog;
@@ -73,7 +50,6 @@ import group.g203.countables.path.main.view.SortDialog;
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmList;
-import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -115,7 +91,6 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     public ImageView mAddCountable;
     public Context mContext;
     public Snackbar mSnackbar;
-    public GoogleApiClient mGoogleApiClient;
 
     @Override
     public void bindModels() {
@@ -140,7 +115,6 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
 
         mAddCountable = ((MainActivity) mMainView).mAddCountable;
         mCountableField = ((MainActivity) mMainView).mCountableField;
-        initGoogleApiClient();
         assignCountableTextListeners();
     }
 
@@ -416,64 +390,6 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         return mRealm;
     }
 
-    void initGoogleApiClient() {
-        mGoogleApiClient = ((MainActivity) mMainView).mGoogleApiClient;
-        mGoogleApiClient = new GoogleApiClient.Builder(mContext)
-                .addApiIfAvailable(Wearable.API)
-                .addConnectionCallbacks(((MainActivity) mMainView))
-                .addOnConnectionFailedListener(((MainActivity) mMainView))
-                .build();
-    }
-
-    public void handleApiClientConnection(@NonNull Bundle bundle) {
-        ArrayList<String> countableJsonList = new ArrayList<>();
-        getRealmInstance().beginTransaction();
-
-        Gson gson = getGson();
-        if (gson != null) {
-            for (Countable countable : getRealmInstance().where(Countable.class).findAll()) {
-                countableJsonList.add(getGson().toJson(countable));
-            }
-        }
-
-        getRealmInstance().commitTransaction();
-
-
-        PutDataMapRequest dataMapRequest = PutDataMapRequest.create(Constants.WEAR_LIST_KEY);
-        dataMapRequest.getDataMap().putStringArrayList(Constants.DATA_MAP_LIST_KEY, countableJsonList);
-
-        PutDataRequest dataRequest = dataMapRequest.asPutDataRequest();
-        PendingResult<DataApi.DataItemResult> pendingResult =
-                Wearable.DataApi.putDataItem(mGoogleApiClient, dataRequest);
-    }
-
-    public void handleApiClientSuspension(int suspensionCode) {
-
-    }
-
-    public void handleApiClientConnectFail(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    public void handleDataChange(DataEventBuffer dataEventBuffer) {
-        for (DataEvent event : dataEventBuffer) {
-            if (event.getType() == DataEvent.TYPE_CHANGED) {
-                DataItem item = event.getDataItem();
-                if (item.getUri().getPath().compareTo(Constants.WEAR_PLUS_COUNT_KEY) == Constants.ZERO) {
-                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    Gson gson = getGson();
-                    getRealmInstance().beginTransaction();
-                    if (gson != null) {
-                        Countable countable = getGson().fromJson(dataMap.getString(Constants.DATA_MAP_PLUS_COUNT_KEY), Countable.class);
-                        getRealmInstance().copyToRealmOrUpdate(countable);
-                    }
-                    getRealmInstance().commitTransaction();
-                }
-            }
-        }
-    }
-
-
     void assignCountableTextListeners() {
         mCountableField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -705,31 +621,6 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     void dismissMainSnackbar() {
         if (mSnackbar != null) {
             mSnackbar.dismiss();
-        }
-    }
-
-    Gson getGson() {
-        try {
-            return new GsonBuilder()
-                    .setExclusionStrategies(new ExclusionStrategy() {
-                        @Override
-                        public boolean shouldSkipField(FieldAttributes f) {
-                            return f.getDeclaringClass().equals(RealmObject.class);
-                        }
-
-                        @Override
-                        public boolean shouldSkipClass(Class<?> clazz) {
-                            return false;
-                        }
-                    })
-                    .registerTypeAdapter(Class.forName("io.realm.CountableRealmProxy"), new CountableSerializer())
-                    .registerTypeAdapter(Class.forName("io.realm.DateFieldRealmProxy"), new DateFieldSerializer())
-                    .registerTypeAdapter(DateTime.class, new DateTimeSerializer())
-                    .registerTypeAdapter(Countable.class, new CountableSerializer())
-                    .registerTypeAdapter(DateField.class, new DateFieldSerializer())
-                    .create();
-        } catch (ClassNotFoundException e) {
-            return null;
         }
     }
 }
