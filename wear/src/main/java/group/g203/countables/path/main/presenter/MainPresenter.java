@@ -28,8 +28,8 @@ public class MainPresenter extends BasePresenter implements ViewHolderPresenter 
 
         Countable c1 = new Countable();
         c1.name = "Test";
-        c1.id = 0;
-        c1.index = 0;
+        c1.id = 1;
+        c1.index = 1;
         c1.loggedDates = null;
         c1.timesCompleted = 0;
         c1.lastModified = null;
@@ -41,8 +41,8 @@ public class MainPresenter extends BasePresenter implements ViewHolderPresenter 
 
         Countable c2 = new Countable();
         c2.name = "Test2";
-        c2.id = 0;
-        c2.index = 0;
+        c2.id = 2;
+        c2.index = 1;
         c2.loggedDates = null;
         c2.timesCompleted = 0;
         c2.lastModified = null;

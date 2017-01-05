@@ -7,6 +7,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.manager.BasePresenterManager;
 import group.g203.countables.base.presenter.BasePresenter;
+import group.g203.countables.base.utils.ComparisonUtils;
 import group.g203.countables.custom_view.loading_view.LoadingAspect;
 import group.g203.countables.path.detail.presenter.DetailPresenter;
 
@@ -80,7 +82,11 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
 
     protected void onNewIntent(Intent intent) {
         this.setIntent(intent);
-        setPresenter(new DetailPresenter());
+        if (!TextUtils.isEmpty(intent.getAction()) && ComparisonUtils.isNumber(intent.getAction())) {
+            setPresenter(new DetailPresenter(Integer.parseInt(intent.getAction())));
+        } else {
+            setPresenter(new DetailPresenter());
+        }
     }
 
     @Override
@@ -164,7 +170,12 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
         if (savedState != null) {
             setPresenter(BasePresenterManager.getInstance().getPresenter(savedState));
         } else {
-            setPresenter(new DetailPresenter());
+            Intent intent = getIntent();
+            if (intent != null && !TextUtils.isEmpty(intent.getAction()) && ComparisonUtils.isNumber(intent.getAction())) {
+                setPresenter(new DetailPresenter(Integer.parseInt(intent.getAction())));
+            } else {
+                setPresenter(new DetailPresenter());
+            }
         }
     }
 

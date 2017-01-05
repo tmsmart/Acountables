@@ -5,6 +5,7 @@ import android.content.Intent;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
+import group.g203.countables.path.detail.view.DetailActivity;
 import group.g203.countables.path.main.view.MainActivity;
 
 public class WearListenerService extends WearableListenerService {
@@ -19,6 +20,12 @@ public class WearListenerService extends WearableListenerService {
                 startActivity(startIntent);
                 break;
             case Constants.THREE:
+                Integer countableId = Integer.parseInt(pathStrings[1]);
+                startIntent = new Intent(this, DetailActivity.class);
+                startIntent.setAction(pathStrings[2]);
+                startIntent.putExtra(Constants.COUNTABLE_ID, countableId);
+                startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                this.startActivity(startIntent);
                 break;
         }
     }

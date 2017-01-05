@@ -63,9 +63,9 @@ public class WearListAdapter extends WearableRecyclerView.Adapter<WearListViewHo
                     mPresenter.handleRowIcon(holder.mIcon, R.drawable.common_full_open_on_phone);
                 }
             } else if (mType.equals(Constants.DETAIL)) {
+                holder.mCountable = mDetailCountable;
                 switch (position) {
                     case 0:
-                        holder.mCountable = mDetailCountable;
                         mPresenter.handleRowIcon(holder.mIcon, R.mipmap.ic_plus_one);
                         break;
                     case 1:

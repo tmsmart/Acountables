@@ -80,6 +80,12 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
     DeleteDialog mDeleteDialog;
     EditDialog mEditDialog;
 
+    public DetailPresenter() {}
+
+    public DetailPresenter(int navIndex) {
+        mNavIndex = navIndex;
+    }
+
     @Override
     public void bindModels() {
         getRealmInstance().beginTransaction();

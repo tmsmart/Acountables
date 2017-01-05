@@ -12,10 +12,13 @@ import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.GeneralPresenter;
 import group.g203.countables.base.view.GeneralView;
 import group.g203.countables.model.Countable;
+import group.g203.countables.path.detail.presenter.DetailPresenter;
 import group.g203.countables.path.detail.view.DetailActivity;
 import group.g203.countables.path.main.presenter.MainPresenter;
 
 public class WearListViewHolder extends WearableRecyclerView.ViewHolder implements GeneralView {
+
+    private static final String FORWARD_SLASH = "/";
 
     private static final int LOG_INDEX = 0;
     private static final int ACCT_INDEX = 1;
@@ -55,8 +58,8 @@ public class WearListViewHolder extends WearableRecyclerView.ViewHolder implemen
                         case LOG_INDEX:
                             break;
                         case ACCT_INDEX:
-                            break;
                         case REMINDER_INDEX:
+                            ((DetailPresenter)getPresenter()).sendOpenOnPhoneMessage(buildMobileNavPathString(mContext.getString(R.string.mobile_open), getAdapterPosition()));
                             break;
                     }
                 }
@@ -71,6 +74,11 @@ public class WearListViewHolder extends WearableRecyclerView.ViewHolder implemen
 
     public <P extends GeneralPresenter> P getPresenter() {
         return (P) mPresenter;
+    }
+
+    private String buildMobileNavPathString(String path, int navIndex) {
+        path = path + FORWARD_SLASH + mCountable.id + FORWARD_SLASH + navIndex;
+        return path;
     }
 
 }
