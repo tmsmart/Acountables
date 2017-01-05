@@ -21,6 +21,8 @@
         <activity
             android:name=".path.detail.view.DetailActivity">
         </activity>
+        <activity
+            android:name="android.support.wearable.activity.ConfirmationActivity">
+        </activity>
     </application>
-
 </manifest>

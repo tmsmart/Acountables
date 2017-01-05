@@ -15,13 +15,12 @@ public class MainPresenter extends BasePresenter implements ViewHolderPresenter 
     @Override
     public void handleContentDisplay() {
         mProgress.setVisibility(View.GONE);
-
-        // if not connected, display connect icon to open in app
-        // if empty display, display empty to refresh
-        // if not empty, then display list
-
-        setUpRecyclerView(getTestCountables());
-        //setGoToPhoneView();
+        if (mClient == null && !mClient.isConnected() && mNode == null) {
+            setNotConnectedView();
+        } else {
+            setUpRecyclerView(getTestCountables());
+            //setGoToPhoneView();
+        }
     }
 
     private static ArrayList<Countable> getTestCountables() {

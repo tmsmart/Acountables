@@ -22,14 +22,14 @@ public class DetailPresenter extends BasePresenter implements ViewHolderPresente
     @Override
     public void handleContentDisplay() {
         mProgress.setVisibility(View.GONE);
-        // if not connected, display connect icon to open in app
-        //setGoToPhoneView();
-        // if connected, then display list display
-
-        Bundle bundle = ((DetailActivity) mGeneralView).getIntent().getExtras();
-        if (bundle.containsKey(Constants.COUNTABLE)) {
-            Countable countable = bundle.getParcelable(Constants.COUNTABLE);
-            setUpRecyclerView(getCountableOptions(), countable);
+        if (mClient == null && !mClient.isConnected() && mNode == null) {
+            setNotConnectedView();
+        } else {
+            Bundle bundle = ((DetailActivity) mGeneralView).getIntent().getExtras();
+            if (bundle.containsKey(Constants.COUNTABLE)) {
+                Countable countable = bundle.getParcelable(Constants.COUNTABLE);
+                setUpRecyclerView(getCountableOptions(), countable);
+            }
         }
     }
 

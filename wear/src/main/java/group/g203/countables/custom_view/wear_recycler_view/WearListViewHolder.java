@@ -13,10 +13,10 @@ import group.g203.countables.base.presenter.GeneralPresenter;
 import group.g203.countables.base.view.GeneralView;
 import group.g203.countables.model.Countable;
 import group.g203.countables.path.detail.view.DetailActivity;
+import group.g203.countables.path.main.presenter.MainPresenter;
 
 public class WearListViewHolder extends WearableRecyclerView.ViewHolder implements GeneralView {
 
-    private static final float ALPHA_CONST = 1f;
     private static final int LOG_INDEX = 0;
     private static final int ACCT_INDEX = 1;
     private static final int REMINDER_INDEX = 2;
@@ -43,7 +43,7 @@ public class WearListViewHolder extends WearableRecyclerView.ViewHolder implemen
                         intent.putExtra(Constants.COUNTABLE, mCountable);
                         mContext.startActivity(intent);
                     } else {
-                        // open on phone
+                        ((MainPresenter)getPresenter()).sendOpenOnPhoneMessage(mContext.getString(R.string.mobile_open));
                     }
                 }
             });
@@ -51,7 +51,14 @@ public class WearListViewHolder extends WearableRecyclerView.ViewHolder implemen
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    switch (getAdapterPosition()) {
+                        case LOG_INDEX:
+                            break;
+                        case ACCT_INDEX:
+                            break;
+                        case REMINDER_INDEX:
+                            break;
+                    }
                 }
             });
         }

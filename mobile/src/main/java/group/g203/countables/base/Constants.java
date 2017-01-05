@@ -2,6 +2,8 @@ package group.g203.countables.base;
 
 public class Constants {
 
+    public static final String FORWARD_SLASH = "/";
+
     public static final String NEWLINE = "\n";
 
     public static final String UNDO = "Undo";
@@ -35,6 +37,10 @@ public class Constants {
     public static final int ZERO = 0;
 
     public static final int ONE = 1;
+
+    public static final int TWO = 2;
+
+    public static final int THREE = 3;
 
     public static final int HOURS_MAX = 12;
 
