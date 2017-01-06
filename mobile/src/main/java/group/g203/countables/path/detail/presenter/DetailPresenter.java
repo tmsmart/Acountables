@@ -21,6 +21,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
+
 import java.util.Date;
 import java.util.HashSet;
 
@@ -79,6 +85,8 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
     InfoDialog mInfoDialog;
     DeleteDialog mDeleteDialog;
     EditDialog mEditDialog;
+    GoogleApiClient mClient;
+    Node mNode;
 
     public DetailPresenter() {}
 
@@ -123,6 +131,9 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
 
         mLoadingAspect = ((DetailActivity) mDetailView).mLoadingAspect;
         mInfoProgress = ((DetailActivity) mDetailView).mInfoProgress;
+
+        mClient = ((DetailActivity) mDetailView).mClient;
+        mNode = ((DetailActivity) mDetailView).mNode;
         bindModels();
     }
 
@@ -569,5 +580,21 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
             InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(((DetailActivity) mDetailView).getCurrentFocus().getWindowToken(), 0);
         }
+    }
+
+    public void onGoogleApiConnected() {
+        Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+            @Override
+            public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                if (!CollectionUtils.isEmpty(nodes.getNodes(), false)) {
+                    for (Node node : nodes.getNodes()) {
+                        mNode = node;
+                    }
+                } else {
+                    mClient.disconnect();
+                    mClient = null;
+                }
+            }
+        });
     }
 }

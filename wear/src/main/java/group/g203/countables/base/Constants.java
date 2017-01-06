@@ -16,6 +16,7 @@ public class Constants {
     public static final String ANCHOR_DATES = "anchorDates";
     public static final String DAY_REPEATER = "dayRepeater";
 
+    public static final String FORWARD_SLASH = "/";
     public static final String MAIN = "main";
     public static final String DETAIL = "detail";
     public static final String COUNTABLE = "countable";

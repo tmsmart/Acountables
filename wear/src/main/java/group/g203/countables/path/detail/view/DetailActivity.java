@@ -10,6 +10,11 @@ public class DetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setPresenter(new DetailPresenter());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         handleContentDisplay();
     }
 }

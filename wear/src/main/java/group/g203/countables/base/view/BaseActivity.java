@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.Wearable;
 
@@ -20,7 +22,9 @@ import group.g203.countables.base.presenter.GeneralPresenter;
 import group.g203.countables.path.detail.presenter.DetailPresenter;
 import group.g203.countables.path.main.presenter.MainPresenter;
 
-public class BaseActivity extends Activity implements BaseView, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class BaseActivity extends Activity implements BaseView, DataApi.DataListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     public WearableRecyclerView mRecyclerView;
     public ProgressBar mProgress;
@@ -118,4 +122,12 @@ public class BaseActivity extends Activity implements BaseView, GoogleApiClient.
     }
 
 
+    @Override
+    public void onDataChanged(DataEventBuffer dataEvents) {
+        if (mDetailPresenter == null) {
+            mMainPresenter.dataChanged(dataEvents);
+        } else {
+            mDetailPresenter.dataChanged(dataEvents);
+        }
+    }
 }

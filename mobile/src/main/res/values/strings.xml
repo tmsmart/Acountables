@@ -109,5 +109,17 @@
     <string name="countables_error">An error occurred fetching your Countables. Please close the app and try again.</string>
     <string name="countables_sort_error">An error occurred sorting your Countables. Please close the app and try again.</string>
     <string name="countable_edit_error">An unexpected error occurred editing your Countable. Please try the previous action again.</string>
+    <string name="connection_error">Wear connection error</string>
+    <string name="connection_suspension">Wear connection suspended</string>
+    <string name="data_transfer_error">Data transfer error. Please try again.</string>
+    <string name="wear_data_error">Wear data error</string>
+    <string name="no_handheld_connection">No connection to handheld</string>
+
+    <!--Data Key Strings-->
+    <string name="mobile_open">mobileOpen</string>
+    <string name="mobile_bg">mobileBg</string>
+    <string name="all_countable_data">allCountableData</string>
+    <string name="get_all_countables_key">get.all.countables</string>
+
 
 </resources>

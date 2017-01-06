@@ -2,6 +2,8 @@ package group.g203.countables.path.main.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +15,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.Wearable;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import group.g203.countables.R;
@@ -21,7 +30,9 @@ import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.custom_view.loading_view.LoadingAspect;
 import group.g203.countables.path.main.presenter.MainPresenter;
 
-public class MainActivity extends AppCompatActivity implements MainView {
+public class MainActivity extends AppCompatActivity implements MainView, DataApi.DataListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     @Bind(R.id.loading_aspect)
     LoadingAspect mLoadingAspect;
@@ -34,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @Bind(R.id.clSnack)
     public CoordinatorLayout clSnack;
     public View mView;
+    public GoogleApiClient mClient;
+    public Node mNode;
     MainPresenter mPresenter;
 
     @Override
@@ -46,6 +59,11 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
         setPresenterFromState(savedInstanceState);
         setEmptyParams();
         handleContentDisplay();
@@ -68,6 +86,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
             displayCreditsDialog();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mClient != null && !mClient.isConnected() && !mClient.isConnecting()) {
+            mClient.connect();
+        }
     }
 
     @Override
@@ -135,5 +161,25 @@ public class MainActivity extends AppCompatActivity implements MainView {
     public void setEmptyParams() {
         mPresenter.setEmptyIcon(R.mipmap.ic_empty_file);
         mPresenter.setEmptyMessage(getString(R.string.no_countables));
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mPresenter.onGoogleApiConnected();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mPresenter.displayToast(getString(R.string.connection_error));
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        mPresenter.displayToast(getString(R.string.connection_error));
+    }
+
+    @Override
+    public void onDataChanged(DataEventBuffer dataEventBuffer) {
+
     }
 }

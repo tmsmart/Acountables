@@ -4,9 +4,25 @@ import android.support.wearable.view.CircledImageView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
+
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
+import group.g203.countables.R;
+import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.BasePresenter;
+import group.g203.countables.base.utils.CollectionUtils;
+import group.g203.countables.base.view.BaseActivity;
 import group.g203.countables.custom_view.wear_recycler_view.ViewHolderPresenter;
 import group.g203.countables.model.Countable;
 
@@ -14,47 +30,7 @@ public class MainPresenter extends BasePresenter implements ViewHolderPresenter 
 
     @Override
     public void handleContentDisplay() {
-        mProgress.setVisibility(View.GONE);
-        if (mClient == null && !mClient.isConnected() && mNode == null) {
-            setNotConnectedView();
-        } else {
-            setUpRecyclerView(getTestCountables());
-            //setGoToPhoneView();
-        }
-    }
-
-    private static ArrayList<Countable> getTestCountables() {
-        ArrayList<Countable> testCountables = new ArrayList<>();
-
-        Countable c1 = new Countable();
-        c1.name = "Test";
-        c1.id = 1;
-        c1.index = 1;
-        c1.loggedDates = null;
-        c1.timesCompleted = 0;
-        c1.lastModified = null;
-        c1.isAccountable = false;
-        c1.isReminderEnabled = false;
-        c1.anchorDates = null;
-        c1.dayRepeater = 0;
-        testCountables.add(c1);
-
-        Countable c2 = new Countable();
-        c2.name = "Test2";
-        c2.id = 2;
-        c2.index = 1;
-        c2.loggedDates = null;
-        c2.timesCompleted = 0;
-        c2.lastModified = null;
-        c2.isAccountable = false;
-        c2.isReminderEnabled = false;
-        c2.anchorDates = null;
-        c2.dayRepeater = 0;
-        testCountables.add(c2);
-
-        testCountables.add(null);
-
-        return testCountables;
+        onGoogleApiConnected();
     }
 
     @Override
@@ -63,7 +39,58 @@ public class MainPresenter extends BasePresenter implements ViewHolderPresenter 
     }
 
     @Override
+    public void onGoogleApiConnected() {
+        Wearable.DataApi.addListener(mClient, ((BaseActivity) mGeneralView));
+        Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+            @Override
+            public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                if (!CollectionUtils.isEmpty(nodes.getNodes())) {
+                    for (Node node : nodes.getNodes()) {
+                        mNode = node;
+                    }
+                    sendMessageToPhone(mContext.getString(R.string.mobile_bg));
+                } else {
+                    mClient.disconnect();
+                    mClient = null;
+                    setNotConnectedView();
+                }
+            }
+        });
+    }
+
+    @Override
     public void handleTextView(TextView textView, String text) {
         textView.setText(text);
+    }
+
+    public void dataChanged(DataEventBuffer dataEvents) {
+        for (DataEvent event : dataEvents) {
+            int eventType = event.getType();
+            if (eventType == DataEvent.TYPE_CHANGED || eventType == DataEvent.TYPE_DELETED) {
+                DataItem item = event.getDataItem();
+                if (item.getUri().getPath().compareTo(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data)) == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    ArrayList<String> countableData = dataMap.getStringArrayList(mContext.getString(R.string.get_all_countables_key));
+                    if (CollectionUtils.isEmpty(countableData)) {
+                        setGoToPhoneView();
+                    } else {
+                        ArrayList<Countable> countables = new ArrayList<>(countableData.size());
+                        for (String data : countableData) {
+                            try {
+                                countables.add(new Countable(data));
+                            } catch (JSONException e) {
+                                displayToast(mContext.getString(R.string.wear_data_error));
+                            }
+                        }
+                        if (mRecyclerView.getVisibility() != View.VISIBLE) {
+                            countables.add(null);
+                            setUpRecyclerView(countables);
+                        } else {
+                            mAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            }
+        }
     }
 }

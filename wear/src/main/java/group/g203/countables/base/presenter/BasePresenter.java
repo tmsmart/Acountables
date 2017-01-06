@@ -90,6 +90,7 @@ public class BasePresenter implements GeneralPresenter {
     }
 
     public void setUpRecyclerView(ArrayList<Countable> countables) {
+        mProgress.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
         mAdapter = new WearListAdapter(countables, mContext);
         mRecyclerView.setAdapter(mAdapter);
@@ -97,6 +98,7 @@ public class BasePresenter implements GeneralPresenter {
     }
 
     public void setUpRecyclerView(ArrayList<String> options, Countable detailCountable) {
+        mProgress.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
         mAdapter = new WearListAdapter(options, detailCountable, mContext);
         mRecyclerView.setAdapter(mAdapter);
@@ -104,11 +106,12 @@ public class BasePresenter implements GeneralPresenter {
     }
 
     public void setGoToPhoneView() {
+        mProgress.setVisibility(View.GONE);
         mButtonLayout.setVisibility(View.VISIBLE);
         mButtonLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendOpenOnPhoneMessage(mContext.getString(R.string.mobile_open));
+                sendMessageToPhone(mContext.getString(R.string.mobile_open));
             }
         });
         mTopText.setText(R.string.no_countables);
@@ -117,6 +120,7 @@ public class BasePresenter implements GeneralPresenter {
     }
 
     public void setNotConnectedView() {
+        mProgress.setVisibility(View.GONE);
         mButtonLayout.setVisibility(View.VISIBLE);
         mTopText.setText("");
         mButton.setImageResource(R.mipmap.ic_sync_off);
@@ -137,29 +141,32 @@ public class BasePresenter implements GeneralPresenter {
                 } else {
                     mClient.disconnect();
                     mClient = null;
+                    setNotConnectedView();
                 }
             }
         });
     }
 
-    public void sendOpenOnPhoneMessage(String messageKey) {
+    public void sendMessageToPhone(final String messageKey) {
         if (mNode != null && mClient != null && mClient.isConnected()) {
             Wearable.MessageApi.sendMessage(mClient, mNode.getId(), messageKey, null).setResultCallback(
                     new ResultCallback<MessageApi.SendMessageResult>() {
                         @Override
                         public void onResult(MessageApi.SendMessageResult sendMessageResult) {
                             if (sendMessageResult.getStatus().isSuccess()) {
-                                Intent intent = new Intent(mContext, ConfirmationActivity.class);
-                                intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.OPEN_ON_PHONE_ANIMATION);
-                                mContext.startActivity(intent);
+                                if (messageKey.equals(mContext.getString(R.string.mobile_open))) {
+                                    Intent intent = new Intent(mContext, ConfirmationActivity.class);
+                                    intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.OPEN_ON_PHONE_ANIMATION);
+                                    mContext.startActivity(intent);
+                                }
                             } else {
-                                displayToast(mContext.getString(R.string.data_error));
+                                displayToast(mContext.getString(R.string.data_transfer_error));
                             }
                         }
                     }
             );
         } else {
-            displayToast(mContext.getString(R.string.data_error));
+            displayToast(mContext.getString(R.string.data_transfer_error));
         }
     }
 }

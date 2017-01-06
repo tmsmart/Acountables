@@ -19,6 +19,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -91,6 +96,8 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     public ImageView mAddCountable;
     public Context mContext;
     public Snackbar mSnackbar;
+    public GoogleApiClient mClient;
+    public Node mNode;
 
     @Override
     public void bindModels() {
@@ -115,6 +122,9 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
 
         mAddCountable = ((MainActivity) mMainView).mAddCountable;
         mCountableField = ((MainActivity) mMainView).mCountableField;
+
+        mClient = ((MainActivity) mMainView).mClient;
+        mNode = ((MainActivity) mMainView).mNode;
         assignCountableTextListeners();
     }
 
@@ -622,5 +632,21 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         if (mSnackbar != null) {
             mSnackbar.dismiss();
         }
+    }
+
+    public void onGoogleApiConnected() {
+        Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+            @Override
+            public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                if (!CollectionUtils.isEmpty(nodes.getNodes(), false)) {
+                    for (Node node : nodes.getNodes()) {
+                        mNode = node;
+                    }
+                } else {
+                    mClient.disconnect();
+                    mClient = null;
+                }
+            }
+        });
     }
 }

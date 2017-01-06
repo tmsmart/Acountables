@@ -11,10 +11,14 @@
     <string name="general_error">Unexpected error</string>
     <string name="connection_error">Wear connection error</string>
     <string name="connection_suspension">Wear connection suspended</string>
-    <string name="data_error">Data transfer error. Please try again.</string>
+    <string name="data_transfer_error">Data transfer error. Please try again.</string>
+    <string name="wear_data_error">Wear data error</string>
     <string name="no_handheld_connection">No connection to handheld</string>
 
     <!--Data Key Strings-->
     <string name="mobile_open">mobileOpen</string>
+    <string name="mobile_bg">mobileBg</string>
+    <string name="all_countable_data">allCountableData</string>
+    <string name="get_all_countables_key">get.all.countables</string>
 
 </resources>

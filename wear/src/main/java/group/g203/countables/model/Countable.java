@@ -3,10 +3,26 @@ package group.g203.countables.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import group.g203.countables.base.Constants;
+
 public class Countable implements Parcelable {
+
+    private final static String OPEN_BRACE = "{";
+    private final static String CLOSED_BRACE = "}";
+    private final static String COLON = ":";
+    private final static String QUOTE = "\"";
+    private final static String COMMA = ",";
+    private final static String OPEN_BRACKET = "[";
+    private final static String CLOSED_BRACKET = "]";
 
     public String name;
     public int id;
@@ -15,12 +31,29 @@ public class Countable implements Parcelable {
     public int timesCompleted;
     public Date lastModified;
     public boolean isAccountable;
-    public ArrayList<Date>  accountableDates;
+    public ArrayList<Date> accountableDates;
     public boolean isReminderEnabled;
     public ArrayList<Date> anchorDates;
     public int dayRepeater;
+    public String jsonString;
 
     public Countable() {
+    }
+
+    public Countable(String jsonString) throws JSONException {
+        JSONObject jsonObj = new JSONObject(jsonString);
+        name = jsonObj.getString(Constants.COUNTABLE_NAME);
+        id = jsonObj.getInt(Constants.COUNTABLE_ID);
+        index = jsonObj.getInt(Constants.COUNTABLE_INDEX);
+        loggedDates = returnDatesFromJson(jsonObj.getJSONArray(Constants.LOGGED_DATES));
+        timesCompleted = jsonObj.getInt(Constants.TIMES_COMPLETED);
+        lastModified = returnDate(jsonObj.getString(Constants.LAST_MODIFIED));
+        isAccountable = jsonObj.getBoolean(Constants.IS_ACCOUNTABLE);
+        accountableDates = returnDatesFromJson(jsonObj.getJSONArray(Constants.ACCOUNTABLE_DATES));
+        isReminderEnabled = jsonObj.getBoolean(Constants.IS_REMINDER);
+        anchorDates = returnDatesFromJson(jsonObj.getJSONArray(Constants.ANCHOR_DATES));
+        dayRepeater = jsonObj.getInt(Constants.DAY_REPEATER);
+        this.jsonString = jsonString;
     }
 
     protected Countable(Parcel in) {
@@ -100,4 +133,58 @@ public class Countable implements Parcelable {
             return new Countable[size];
         }
     };
+
+    private void setEmptyCountable() {
+        name = null;
+        id = 0;
+        index = 0;
+        loggedDates = null;
+        timesCompleted = 0;
+        lastModified = null;
+        isAccountable = false;
+        accountableDates = null;
+        isReminderEnabled = false;
+        anchorDates = null;
+        dayRepeater = 0;
+        jsonString = null;
+    }
+
+    private ArrayList<Date> returnDatesFromJson(JSONArray array) {
+        if (array.length() == 0) {
+            return null;
+        } else {
+            ArrayList<Date> dates = new ArrayList<>(array.length());
+            for (int i = 0; i < array.length(); i++) {
+                try {
+                    dates.add(returnDate(((JSONObject) array.get(i)).getString(Constants.DATEFIELD_DATE)));
+                } catch (JSONException e) {
+                    return null;
+                }
+            }
+            return dates;
+        }
+    }
+
+    private Date returnDate(String dateString) {
+        Date date;
+        try {
+            SimpleDateFormat format =
+                    new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            date = format.parse(dateString);
+        } catch (ParseException pe) {
+            return null;
+        }
+        return date;
+    }
+
+    public void updateCount() throws JSONException {
+        int updatedCount = timesCompleted++;
+
+        JSONObject jsonObj = new JSONObject(jsonString);
+
+        jsonObj.put(Constants.TIMES_COMPLETED, updatedCount);
+        jsonObj.put(Constants.LAST_MODIFIED, new Date());
+
+        jsonString = jsonObj.toString();
+    }
 }

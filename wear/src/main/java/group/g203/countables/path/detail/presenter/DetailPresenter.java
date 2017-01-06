@@ -6,6 +6,8 @@ import android.support.wearable.view.CircledImageView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.wearable.DataEventBuffer;
+
 import java.util.ArrayList;
 
 import group.g203.countables.R;
@@ -50,5 +52,9 @@ public class DetailPresenter extends BasePresenter implements ViewHolderPresente
         options.add(mContext.getString(R.string.set_accountability));
         options.add(mContext.getString(R.string.set_reminder));
         return options;
+    }
+
+    public void dataChanged(DataEventBuffer dataEvents) {
+
     }
 }

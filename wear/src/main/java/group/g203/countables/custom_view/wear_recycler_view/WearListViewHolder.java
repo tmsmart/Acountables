@@ -46,7 +46,7 @@ public class WearListViewHolder extends WearableRecyclerView.ViewHolder implemen
                         intent.putExtra(Constants.COUNTABLE, mCountable);
                         mContext.startActivity(intent);
                     } else {
-                        ((MainPresenter)getPresenter()).sendOpenOnPhoneMessage(mContext.getString(R.string.mobile_open));
+                        ((MainPresenter)getPresenter()).sendMessageToPhone(mContext.getString(R.string.mobile_open));
                     }
                 }
             });
@@ -59,7 +59,7 @@ public class WearListViewHolder extends WearableRecyclerView.ViewHolder implemen
                             break;
                         case ACCT_INDEX:
                         case REMINDER_INDEX:
-                            ((DetailPresenter)getPresenter()).sendOpenOnPhoneMessage(buildMobileNavPathString(mContext.getString(R.string.mobile_open), getAdapterPosition()));
+                            ((DetailPresenter)getPresenter()).sendMessageToPhone(buildMobileNavPathString(mContext.getString(R.string.mobile_open), getAdapterPosition()));
                             break;
                     }
                 }
