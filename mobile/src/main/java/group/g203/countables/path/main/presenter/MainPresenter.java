@@ -81,9 +81,10 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     private final static String MAX_NAME_SUFFIX = " characters or less";
     private final static String NAME_MUST_BE_NONEMPTY = "Countable name cannot be empty";
     private final static String COUNTABLE_CREATED = "Countable created successfully";
+    private final static String COUNTABLE_DELETION_PROGRESS = "Countable deletion in progress...";
     private final static String COUNTABLE_DELETED = "Countable deleted successfully";
     private final static String COUNTABLE_CREATE_REVERTED = "Countable creation reverted successfully";
-    private final static String COUNTABLE_DELETE_REVERTED = "Countable deletion reverted successfully";
+    private final static String COUNTABLE_DELETE_REVERTED = "Countable deletion stopped successfully";
     private final static int AZ = 0;
     private final static int ZA = 1;
     private final static int RECENTLY_UPDATED = 2;
@@ -540,13 +541,11 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     }
 
     public void deleteCountableViaSwipe(final Countable countable) {
+        displayLoading();
         getRealmInstance().beginTransaction();
         final TempCountable tempCountable = TempCountable.createTempCountable(countable);
         countable.deleteFromRealm();
         mAdapter.setData(getRealmInstance().where(Countable.class).findAll());
-        if (getRealmInstance().where(Countable.class).findAll().size() == 0) {
-            displayEmptyView();
-        }
         getRealmInstance().commitTransaction();
 
         setAndShowMainSnackbar(new View.OnClickListener() {
@@ -557,10 +556,16 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         }, new Snackbar.Callback() {
             @Override
             public void onDismissed(Snackbar snackbar, int event) {
+                setAndShowMainSnackbar(null, null, COUNTABLE_DELETED);
                 if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
-                    getRealmInstance().beginTransaction();
-                    assignCountableIndices(getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING));
-                    getRealmInstance().commitTransaction();
+                    if (getRealmInstance().where(Countable.class).findAll().size() == 0) {
+                        displayEmptyView();
+                    } else {
+                        displayContent();
+                        getRealmInstance().beginTransaction();
+                        assignCountableIndices(getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING));
+                        getRealmInstance().commitTransaction();
+                    }
                 } else {
                     displayLoading();
 
@@ -590,7 +595,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     displayContent();
                 }
             }
-        }, COUNTABLE_DELETED, Constants.UNDO);
+        }, COUNTABLE_DELETION_PROGRESS, Constants.UNDO);
     }
 
     public void reorderCountablesViaDrag(final Countable countable, final int fromPosition,
