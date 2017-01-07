@@ -225,6 +225,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                         sortByCompletedLeast();
                         break;
                 }
+                sendCountableDataToWear();
             }
         });
     }
@@ -611,6 +612,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                 mAdapter.setData(countables);
             }
         });
+        sendCountableDataToWear();
     }
 
     RealmList<DateField> arrayListToDateRealmList(ArrayList<Date> dates, RealmList<DateField> dateFields) {
@@ -682,28 +684,31 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
 
                     mAdapter.notifyDataSetChanged();
 
-                    ArrayList<String> countableList = new ArrayList<>(1);
-
-                    getRealmInstance().beginTransaction();
-                    List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
-                    getRealmInstance().commitTransaction();
-
-                    if (CollectionUtils.isEmpty(allCountables, true)) {
-                    } else {
-                        countableList = new ArrayList<>(allCountables.size());
-                        for (Countable countable : allCountables) {
-                            countableList.add(GsonManager.toJson(countable));
-                            DisplayUtils.displayToast(mContext, countable.timesCompleted + "", Toast.LENGTH_SHORT);
-                        }
-                    }
-                    PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
-                    putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
-                    putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
-                    PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-                    PendingResult<DataApi.DataItemResult> pendingResult =
-                            Wearable.DataApi.putDataItem(mClient, putDataReq);
+                    sendCountableDataToWear();
                 }
             }
         }
+    }
+
+    void sendCountableDataToWear() {
+        ArrayList<String> countableList = new ArrayList<>(1);
+
+        getRealmInstance().beginTransaction();
+        List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
+        getRealmInstance().commitTransaction();
+
+        if (CollectionUtils.isEmpty(allCountables, true)) {
+        } else {
+            countableList = new ArrayList<>(allCountables.size());
+            for (Countable countable : allCountables) {
+                countableList.add(GsonManager.toJson(countable));
+            }
+        }
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
+        putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
+        putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(mClient, putDataReq);
     }
 }
