@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements MainView, DataApi
     @Override
     protected void onPause() {
         super.onPause();
+        Wearable.DataApi.removeListener(mClient, this);
     }
 
     @Override
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements MainView, DataApi
     }
 
     @Override
-    public void onDataChanged(DataEventBuffer dataEventBuffer) {
-
+    public void onDataChanged(DataEventBuffer dataEvents) {
+        mPresenter.dataChanged(dataEvents);
     }
 }

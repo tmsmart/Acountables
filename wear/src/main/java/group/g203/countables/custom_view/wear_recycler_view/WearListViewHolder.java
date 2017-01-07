@@ -56,6 +56,7 @@ public class WearListViewHolder extends WearableRecyclerView.ViewHolder implemen
                 public void onClick(View v) {
                     switch (getAdapterPosition()) {
                         case LOG_INDEX:
+                            ((DetailPresenter)getPresenter()).updateLogCount(mCountable);
                             break;
                         case ACCT_INDEX:
                         case REMINDER_INDEX:

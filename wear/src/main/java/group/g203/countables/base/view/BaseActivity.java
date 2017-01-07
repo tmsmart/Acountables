@@ -121,7 +121,6 @@ public class BaseActivity extends Activity implements BaseView, DataApi.DataList
         }
     }
 
-
     @Override
     public void onDataChanged(DataEventBuffer dataEvents) {
         if (mDetailPresenter == null) {

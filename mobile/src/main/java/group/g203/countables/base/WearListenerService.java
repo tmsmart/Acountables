@@ -28,6 +28,7 @@ import group.g203.countables.model.Countable;
 import group.g203.countables.path.detail.view.DetailActivity;
 import group.g203.countables.path.main.view.MainActivity;
 import io.realm.Realm;
+import io.realm.Sort;
 
 public class WearListenerService extends WearableListenerService implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -55,7 +56,6 @@ public class WearListenerService extends WearableListenerService implements Goog
                             .build();
 
                     ConnectionResult connectionResult = mClient.blockingConnect();
-
                     if (connectionResult.isSuccess()) {
                         Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
                             @Override
@@ -88,24 +88,22 @@ public class WearListenerService extends WearableListenerService implements Goog
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (mNode != null && mClient != null && mClient.isConnected()) {
-
             ArrayList<String> countableData = new ArrayList<>(1);
 
             getRealmInstance().beginTransaction();
-            List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll();
+            List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
             getRealmInstance().commitTransaction();
 
             if (CollectionUtils.isEmpty(allCountables, true)) {
-
             } else {
                 countableData = new ArrayList<>(allCountables.size());
                 for (Countable countable : allCountables) {
                     countableData.add(GsonManager.toJson(countable));
                 }
             }
-
             PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + getString(R.string.all_countable_data));
             putDataMapReq.getDataMap().putStringArrayList(getString(R.string.get_all_countables_key), countableData);
+            putDataMapReq.getDataMap().putLong(getString(R.string.data_map_time), System.currentTimeMillis());
             PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
             PendingResult<DataApi.DataItemResult> pendingResult =
                     Wearable.DataApi.putDataItem(mClient, putDataReq);

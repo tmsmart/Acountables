@@ -120,6 +120,8 @@
     <string name="mobile_bg">mobileBg</string>
     <string name="all_countable_data">allCountableData</string>
     <string name="get_all_countables_key">get.all.countables</string>
+    <string name="wear_countable_key">wear.countable</string>
+    <string name="data_map_time">dataMapTime</string>
 
 
 </resources>

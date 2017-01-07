@@ -24,6 +24,7 @@ import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.utils.CollectionUtils;
 import group.g203.countables.base.view.BaseActivity;
 import group.g203.countables.custom_view.wear_recycler_view.ViewHolderPresenter;
+import group.g203.countables.custom_view.wear_recycler_view.WearListAdapter;
 import group.g203.countables.model.Countable;
 
 public class MainPresenter extends BasePresenter implements ViewHolderPresenter {
@@ -82,11 +83,12 @@ public class MainPresenter extends BasePresenter implements ViewHolderPresenter 
                                 displayToast(mContext.getString(R.string.wear_data_error));
                             }
                         }
+                        countables.add(null);
                         if (mRecyclerView.getVisibility() != View.VISIBLE) {
-                            countables.add(null);
                             setUpRecyclerView(countables);
                         } else {
-                            mAdapter.notifyDataSetChanged();
+                            WearListAdapter adapter = new WearListAdapter(countables, mContext);
+                            mRecyclerView.swapAdapter(adapter, false);
                         }
                     }
                 }

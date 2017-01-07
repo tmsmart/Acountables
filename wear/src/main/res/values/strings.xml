@@ -7,6 +7,8 @@
     <string name="set_accountability">Set Accountability</string>
     <string name="set_reminder">Set Reminder</string>
 
+    <string name="completed_msg">Logged. New Count:</string>
+
     <!--Error Strings-->
     <string name="general_error">Unexpected error</string>
     <string name="connection_error">Wear connection error</string>
@@ -20,5 +22,6 @@
     <string name="mobile_bg">mobileBg</string>
     <string name="all_countable_data">allCountableData</string>
     <string name="get_all_countables_key">get.all.countables</string>
+    <string name="wear_countable_key">wear.countable</string>
 
 </resources>

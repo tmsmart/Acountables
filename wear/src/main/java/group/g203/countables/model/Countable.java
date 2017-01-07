@@ -16,14 +16,6 @@ import group.g203.countables.base.Constants;
 
 public class Countable implements Parcelable {
 
-    private final static String OPEN_BRACE = "{";
-    private final static String CLOSED_BRACE = "}";
-    private final static String COLON = ":";
-    private final static String QUOTE = "\"";
-    private final static String COMMA = ",";
-    private final static String OPEN_BRACKET = "[";
-    private final static String CLOSED_BRACKET = "]";
-
     public String name;
     public int id;
     public int index;
@@ -56,6 +48,34 @@ public class Countable implements Parcelable {
         this.jsonString = jsonString;
     }
 
+    private ArrayList<Date> returnDatesFromJson(JSONArray array) {
+        if (array.length() == 0) {
+            return null;
+        } else {
+            ArrayList<Date> dates = new ArrayList<>(array.length());
+            for (int i = 0; i < array.length(); i++) {
+                try {
+                    dates.add(returnDate(((JSONObject) array.get(i)).getString(Constants.DATEFIELD_DATE)));
+                } catch (JSONException e) {
+                    return null;
+                }
+            }
+            return dates;
+        }
+    }
+
+    private Date returnDate(String dateString) {
+        Date date;
+        try {
+            SimpleDateFormat format =
+                    new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+            date = format.parse(dateString);
+        } catch (ParseException pe) {
+            return null;
+        }
+        return date;
+    }
+
     protected Countable(Parcel in) {
         name = in.readString();
         id = in.readInt();
@@ -84,6 +104,7 @@ public class Countable implements Parcelable {
             anchorDates = null;
         }
         dayRepeater = in.readInt();
+        jsonString = in.readString();
     }
 
     @Override
@@ -119,6 +140,7 @@ public class Countable implements Parcelable {
             dest.writeList(anchorDates);
         }
         dest.writeInt(dayRepeater);
+        dest.writeString(jsonString);
     }
 
     @SuppressWarnings("unused")
@@ -133,58 +155,4 @@ public class Countable implements Parcelable {
             return new Countable[size];
         }
     };
-
-    private void setEmptyCountable() {
-        name = null;
-        id = 0;
-        index = 0;
-        loggedDates = null;
-        timesCompleted = 0;
-        lastModified = null;
-        isAccountable = false;
-        accountableDates = null;
-        isReminderEnabled = false;
-        anchorDates = null;
-        dayRepeater = 0;
-        jsonString = null;
-    }
-
-    private ArrayList<Date> returnDatesFromJson(JSONArray array) {
-        if (array.length() == 0) {
-            return null;
-        } else {
-            ArrayList<Date> dates = new ArrayList<>(array.length());
-            for (int i = 0; i < array.length(); i++) {
-                try {
-                    dates.add(returnDate(((JSONObject) array.get(i)).getString(Constants.DATEFIELD_DATE)));
-                } catch (JSONException e) {
-                    return null;
-                }
-            }
-            return dates;
-        }
-    }
-
-    private Date returnDate(String dateString) {
-        Date date;
-        try {
-            SimpleDateFormat format =
-                    new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-            date = format.parse(dateString);
-        } catch (ParseException pe) {
-            return null;
-        }
-        return date;
-    }
-
-    public void updateCount() throws JSONException {
-        int updatedCount = timesCompleted++;
-
-        JSONObject jsonObj = new JSONObject(jsonString);
-
-        jsonObj.put(Constants.TIMES_COMPLETED, updatedCount);
-        jsonObj.put(Constants.LAST_MODIFIED, new Date());
-
-        jsonString = jsonObj.toString();
-    }
 }
