@@ -112,12 +112,12 @@ public class WearListenerService extends WearableListenerService implements Goog
 
     @Override
     public void onConnectionSuspended(int i) {
-// go to main and display toast
+        openAndDisplayConnectionError(getString(R.string.connection_suspension));
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // go to main and display toast
+        openAndDisplayConnectionError(getString(R.string.connection_error));
     }
 
     Realm getRealmInstance() {
@@ -125,6 +125,13 @@ public class WearListenerService extends WearableListenerService implements Goog
             mRealm = Realm.getDefaultInstance();
         }
         return mRealm;
+    }
+
+    void openAndDisplayConnectionError(String errMsg) {
+        Intent startIntent = new Intent(this, MainActivity.class);
+        startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startIntent.setAction(errMsg);
+        startActivity(startIntent);
     }
 }
 

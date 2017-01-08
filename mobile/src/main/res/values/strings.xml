@@ -114,6 +114,7 @@
     <string name="data_transfer_error">Data transfer error. Please try again.</string>
     <string name="wear_data_error">Wear data error</string>
     <string name="no_handheld_connection">No connection to handheld</string>
+    <string name="wear_connection">Wear connection</string>
 
     <!--Data Key Strings-->
     <string name="mobile_open">mobileOpen</string>
@@ -122,6 +123,5 @@
     <string name="get_all_countables_key">get.all.countables</string>
     <string name="wear_countable_key">wear.countable</string>
     <string name="data_map_time">dataMapTime</string>
-
 
 </resources>

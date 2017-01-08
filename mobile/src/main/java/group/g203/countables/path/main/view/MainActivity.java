@@ -1,6 +1,7 @@
 package group.g203.countables.path.main.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -67,6 +69,14 @@ public class MainActivity extends AppCompatActivity implements MainView, DataApi
         setPresenterFromState(savedInstanceState);
         setEmptyParams();
         handleContentDisplay();
+    }
+
+    protected void onNewIntent(Intent intent) {
+        this.setIntent(intent);
+        setPresenter(new MainPresenter());
+        if (intent != null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().contains(getString(R.string.wear_connection))) {
+            mPresenter.displayToast(intent.getAction());
+        }
     }
 
     @Override
@@ -138,6 +148,10 @@ public class MainActivity extends AppCompatActivity implements MainView, DataApi
             setPresenter(BasePresenterManager.getInstance().getPresenter(savedState));
         } else {
             setPresenter(new MainPresenter());
+            Intent intent = getIntent();
+            if (intent != null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().contains(getString(R.string.wear_connection))) {
+                mPresenter.displayToast(intent.getAction());
+            }
         }
     }
 
