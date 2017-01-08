@@ -91,6 +91,7 @@ public class BasePresenter implements GeneralPresenter {
 
     public void setUpRecyclerView(ArrayList<Countable> countables) {
         mProgress.setVisibility(View.GONE);
+        hideButtonLayout();
         mRecyclerView.setVisibility(View.VISIBLE);
         mAdapter = new WearListAdapter(countables, mContext);
         mRecyclerView.setAdapter(mAdapter);
@@ -99,13 +100,23 @@ public class BasePresenter implements GeneralPresenter {
 
     public void setUpRecyclerView(ArrayList<String> options, Countable detailCountable) {
         mProgress.setVisibility(View.GONE);
+        hideButtonLayout();
         mRecyclerView.setVisibility(View.VISIBLE);
         mAdapter = new WearListAdapter(options, detailCountable, mContext);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext, R.drawable.rv_divider));
     }
 
+    public void hideRecyclerView() {
+        mRecyclerView.setVisibility(View.GONE);
+    }
+
+    public void hideButtonLayout() {
+        mButtonLayout.setVisibility(View.GONE);
+    }
+
     public void setGoToPhoneView() {
+        hideRecyclerView();
         mProgress.setVisibility(View.GONE);
         mButtonLayout.setVisibility(View.VISIBLE);
         mButtonLayout.setOnClickListener(new View.OnClickListener() {
@@ -120,6 +131,7 @@ public class BasePresenter implements GeneralPresenter {
     }
 
     public void setNotConnectedView() {
+        hideRecyclerView();
         mProgress.setVisibility(View.GONE);
         mButtonLayout.setVisibility(View.VISIBLE);
         mTopText.setText("");

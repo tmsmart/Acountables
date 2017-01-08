@@ -685,6 +685,10 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     dbCountable = getRealmInstance().where(Countable.class).equalTo(Constants.ID, wearCountable.id).findFirst();
                     dbCountable.timesCompleted = wearCountable.timesCompleted;
                     dbCountable.lastModified = wearCountable.lastModified;
+
+                    DateField dateField = getRealmInstance().createObject(DateField.class);
+                    dateField.date = new Date();
+                    dbCountable.loggedDates.add(dateField);
                     getRealmInstance().commitTransaction();
 
                     mAdapter.notifyDataSetChanged();
