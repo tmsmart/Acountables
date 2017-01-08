@@ -169,7 +169,7 @@ public class BasePresenter implements GeneralPresenter {
                         @Override
                         public void onResult(MessageApi.SendMessageResult sendMessageResult) {
                             if (sendMessageResult.getStatus().isSuccess()) {
-                                if (messageKey.equals(mContext.getString(R.string.mobile_open))) {
+                                if (messageKey.contains(mContext.getString(R.string.mobile_open))) {
                                     Intent intent = new Intent(mContext, ConfirmationActivity.class);
                                     intent.putExtra(ConfirmationActivity.EXTRA_ANIMATION_TYPE, ConfirmationActivity.OPEN_ON_PHONE_ANIMATION);
                                     mContext.startActivity(intent);
