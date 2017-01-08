@@ -46,6 +46,7 @@ public class DetailPresenter extends BasePresenter implements ViewHolderPresente
                 setUpRecyclerView(getCountableOptions(), countable);
             }
         }
+        onGoogleApiConnected();
     }
 
     @Override

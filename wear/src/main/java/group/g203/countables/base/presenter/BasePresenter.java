@@ -143,20 +143,23 @@ public class BasePresenter implements GeneralPresenter {
     }
 
     public void onGoogleApiConnected() {
-        Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-            @Override
-            public void onResult(NodeApi.GetConnectedNodesResult nodes) {
-                if (!CollectionUtils.isEmpty(nodes.getNodes())) {
-                    for (Node node : nodes.getNodes()) {
-                        mNode = node;
+        if (mClient != null) {
+            Wearable.DataApi.addListener(mClient, ((BaseActivity) mGeneralView));
+            Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                @Override
+                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                    if (!CollectionUtils.isEmpty(nodes.getNodes())) {
+                        for (Node node : nodes.getNodes()) {
+                            mNode = node;
+                        }
+                    } else {
+                        mClient.disconnect();
+                        mClient = null;
+                        setNotConnectedView();
                     }
-                } else {
-                    mClient.disconnect();
-                    mClient = null;
-                    setNotConnectedView();
                 }
-            }
-        });
+            });
+        }
     }
 
     public void sendMessageToPhone(final String messageKey) {

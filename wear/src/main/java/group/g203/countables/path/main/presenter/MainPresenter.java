@@ -41,22 +41,24 @@ public class MainPresenter extends BasePresenter implements ViewHolderPresenter 
 
     @Override
     public void onGoogleApiConnected() {
-        Wearable.DataApi.addListener(mClient, ((BaseActivity) mGeneralView));
-        Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-            @Override
-            public void onResult(NodeApi.GetConnectedNodesResult nodes) {
-                if (!CollectionUtils.isEmpty(nodes.getNodes())) {
-                    for (Node node : nodes.getNodes()) {
-                        mNode = node;
+        if (mClient != null) {
+            Wearable.DataApi.addListener(mClient, ((BaseActivity) mGeneralView));
+            Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                @Override
+                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                    if (!CollectionUtils.isEmpty(nodes.getNodes())) {
+                        for (Node node : nodes.getNodes()) {
+                            mNode = node;
+                        }
+                        sendMessageToPhone(mContext.getString(R.string.mobile_bg));
+                    } else {
+                        mClient.disconnect();
+                        mClient = null;
+                        setNotConnectedView();
                     }
-                    sendMessageToPhone(mContext.getString(R.string.mobile_bg));
-                } else {
-                    mClient.disconnect();
-                    mClient = null;
-                    setNotConnectedView();
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override

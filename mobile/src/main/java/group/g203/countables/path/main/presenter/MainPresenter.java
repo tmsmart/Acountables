@@ -653,20 +653,22 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     }
 
     public void onGoogleApiConnected() {
-        Wearable.DataApi.addListener(mClient, ((MainActivity) mMainView));
-        Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-            @Override
-            public void onResult(NodeApi.GetConnectedNodesResult nodes) {
-                if (!CollectionUtils.isEmpty(nodes.getNodes(), false)) {
-                    for (Node node : nodes.getNodes()) {
-                        mNode = node;
+        if (mClient != null) {
+            Wearable.DataApi.addListener(mClient, ((MainActivity) mMainView));
+            Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                @Override
+                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                    if (!CollectionUtils.isEmpty(nodes.getNodes(), false)) {
+                        for (Node node : nodes.getNodes()) {
+                            mNode = node;
+                        }
+                    } else {
+                        mClient.disconnect();
+                        mClient = null;
                     }
-                } else {
-                    mClient.disconnect();
-                    mClient = null;
                 }
-            }
-        });
+            });
+        }
     }
 
     public void dataChanged(DataEventBuffer dataEvents) {

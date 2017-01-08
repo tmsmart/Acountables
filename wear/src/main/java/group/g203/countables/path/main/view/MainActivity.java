@@ -23,6 +23,8 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Wearable.DataApi.removeListener(mClient, this);
+        if (mClient != null) {
+            Wearable.DataApi.removeListener(mClient, this);
+        }
     }
 }

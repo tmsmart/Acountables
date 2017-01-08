@@ -102,12 +102,15 @@ public class MainActivity extends AppCompatActivity implements MainView, DataApi
         if (mPresenter.mAdapter != null) {
             mPresenter.mAdapter.notifyDataSetChanged();
         }
+        mPresenter.onGoogleApiConnected();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Wearable.DataApi.removeListener(mClient, this);
+        if (mClient != null) {
+            Wearable.DataApi.removeListener(mClient, this);
+        }
     }
 
     @Override
