@@ -504,6 +504,22 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     displayContent();
                     mCountablesRv.smoothScrollToPosition(addedCountable.index);
 
+                    ArrayList<String> countableList = new ArrayList<>(1);
+                    List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
+                    if (CollectionUtils.isEmpty(allCountables, true)) {
+                    } else {
+                        countableList = new ArrayList<>(allCountables.size());
+                        for (Countable countable : allCountables) {
+                            countableList.add(GsonManager.toJson(countable));
+                        }
+                    }
+                    PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
+                    putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
+                    putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
+                    PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+                    PendingResult<DataApi.DataItemResult> pendingResult =
+                            Wearable.DataApi.putDataItem(mClient, putDataReq);
+
                     setAndShowMainSnackbar(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -536,6 +552,21 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                 }
 
                 setAndShowMainSnackbar(null, null, COUNTABLE_CREATE_REVERTED);
+                ArrayList<String> countableList = new ArrayList<>(1);
+                List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
+                if (CollectionUtils.isEmpty(allCountables, true)) {
+                } else {
+                    countableList = new ArrayList<>(allCountables.size());
+                    for (Countable countable : allCountables) {
+                        countableList.add(GsonManager.toJson(countable));
+                    }
+                }
+                PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
+                putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
+                putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
+                PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+                PendingResult<DataApi.DataItemResult> pendingResult =
+                        Wearable.DataApi.putDataItem(mClient, putDataReq);
             }
         });
     }
@@ -566,6 +597,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                         assignCountableIndices(getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING));
                         getRealmInstance().commitTransaction();
                     }
+                    sendCountableDataToWear();
                 } else {
                     displayLoading();
 
