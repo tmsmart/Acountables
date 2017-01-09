@@ -22,25 +22,39 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
 import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.manager.BaseDialogManager;
+import group.g203.countables.base.manager.GsonManager;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.utils.CalendarUtils;
 import group.g203.countables.base.utils.CollectionUtils;
+import group.g203.countables.base.utils.ComparisonUtils;
 import group.g203.countables.base.utils.DisplayUtils;
 import group.g203.countables.base.view.BaseView;
 import group.g203.countables.custom_view.loading_view.LoadingAspect;
 import group.g203.countables.custom_view.loading_view.LoadingPresenter;
 import group.g203.countables.model.Countable;
+import group.g203.countables.model.DateField;
 import group.g203.countables.path.detail.view.AccountableFragment;
 import group.g203.countables.path.detail.view.DeleteDialog;
 import group.g203.countables.path.detail.view.DetailActivity;
@@ -583,15 +597,79 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
     }
 
     public void onGoogleApiConnected() {
-        Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
-            @Override
-            public void onResult(NodeApi.GetConnectedNodesResult nodes) {
-                if (!CollectionUtils.isEmpty(nodes.getNodes(), false)) {
-                    for (Node node : nodes.getNodes()) {
-                        mNode = node;
+        if (mClient != null) {
+            Wearable.DataApi.addListener(mClient, ((DetailActivity) mDetailView));
+            Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                @Override
+                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                    if (!CollectionUtils.isEmpty(nodes.getNodes(), false)) {
+                        for (Node node : nodes.getNodes()) {
+                            mNode = node;
+                        }
                     }
                 }
+            });
+        }
+    }
+
+    public void onDataChanged(DataEventBuffer dataEventBuffer, FragmentManager fm) {
+        for (DataEvent event : dataEventBuffer) {
+            int eventType = event.getType();
+            if (eventType == DataEvent.TYPE_CHANGED) {
+                DataItem item = event.getDataItem();
+                List<String> pathSegments = item.getUri().getPathSegments();
+                if (ComparisonUtils.isNumber(pathSegments.get(0))) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    String countableData = dataMap.getString(mContext.getString(R.string.wear_countable_key));
+
+                    Countable wearCountable = GsonManager.fromJson(countableData);
+                    Countable dbCountable;
+                    getRealmInstance().beginTransaction();
+                    dbCountable = getRealmInstance().where(Countable.class).equalTo(Constants.ID, wearCountable.id).findFirst();
+                    dbCountable.timesCompleted = wearCountable.timesCompleted;
+                    dbCountable.lastModified = wearCountable.lastModified;
+
+                    DateField dateField = getRealmInstance().createObject(DateField.class);
+                    dateField.date = new Date();
+                    dbCountable.loggedDates.add(dateField);
+                    getRealmInstance().commitTransaction();
+
+                    sendCountableDataToWear();
+
+                    if (Integer.parseInt(pathSegments.get(0)) == mCountable.id && mNavIndex == DetailActivity.TIME_LOG_INDEX) {
+                        String tag = TimeLogFragment.TAG;
+                        TimeLogFragment fragment = (TimeLogFragment) fm.findFragmentByTag(tag);
+                        if (fragment != null) {
+                            fragment.getPresenter().handleInitialContentDisplay();
+                        } else {
+                            DisplayUtils.displayToast(mContext, mContext.getString(R.string.countable_edit_error), Toast.LENGTH_SHORT);
+                        }
+                    }
+                    handleInitDisplay(mNavIndex);
+                }
             }
-        });
+        }
+    }
+
+    void sendCountableDataToWear() {
+        ArrayList<String> countableList = new ArrayList<>(1);
+
+        getRealmInstance().beginTransaction();
+        List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
+        getRealmInstance().commitTransaction();
+
+        if (CollectionUtils.isEmpty(allCountables, true)) {
+        } else {
+            countableList = new ArrayList<>(allCountables.size());
+            for (Countable countable : allCountables) {
+                countableList.add(GsonManager.toJson(countable));
+            }
+        }
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
+        putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
+        putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(mClient, putDataReq);
     }
 }

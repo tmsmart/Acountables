@@ -141,6 +141,15 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
     public void onResume() {
         super.onResume();
         setInitialCountableInfo(mPresenter.mNavIndex);
+        mPresenter.onGoogleApiConnected();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mClient != null) {
+            Wearable.DataApi.removeListener(mClient, this);
+        }
     }
 
     @Override
@@ -279,6 +288,6 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
 
     @Override
     public void onDataChanged(DataEventBuffer dataEventBuffer) {
-
+        mPresenter.onDataChanged(dataEventBuffer, getSupportFragmentManager());
     }
 }
