@@ -153,8 +153,6 @@ public class BasePresenter implements GeneralPresenter {
                             mNode = node;
                         }
                     } else {
-                        mClient.disconnect();
-                        mClient = null;
                         setNotConnectedView();
                     }
                 }

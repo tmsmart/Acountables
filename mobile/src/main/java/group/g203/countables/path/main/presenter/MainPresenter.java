@@ -694,9 +694,6 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                         for (Node node : nodes.getNodes()) {
                             mNode = node;
                         }
-                    } else {
-                        mClient.disconnect();
-                        mClient = null;
                     }
                 }
             });

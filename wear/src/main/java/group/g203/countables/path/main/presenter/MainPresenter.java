@@ -52,8 +52,6 @@ public class MainPresenter extends BasePresenter implements ViewHolderPresenter 
                         }
                         sendMessageToPhone(mContext.getString(R.string.mobile_bg));
                     } else {
-                        mClient.disconnect();
-                        mClient = null;
                         setNotConnectedView();
                     }
                 }

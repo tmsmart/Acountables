@@ -65,9 +65,6 @@ public class WearListenerService extends WearableListenerService implements Goog
                                         mNode = node;
                                         onConnected(null);
                                     }
-                                } else {
-                                    mClient.disconnect();
-                                    mClient = null;
                                 }
                             }
                         });

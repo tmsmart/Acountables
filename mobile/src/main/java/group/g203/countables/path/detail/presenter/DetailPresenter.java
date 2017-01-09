@@ -590,9 +590,6 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
                     for (Node node : nodes.getNodes()) {
                         mNode = node;
                     }
-                } else {
-                    mClient.disconnect();
-                    mClient = null;
                 }
             }
         });
