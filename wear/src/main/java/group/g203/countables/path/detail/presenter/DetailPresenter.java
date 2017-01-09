@@ -1,5 +1,6 @@
 package group.g203.countables.path.detail.presenter;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -11,7 +12,11 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
@@ -21,12 +26,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.presenter.BasePresenter;
+import group.g203.countables.base.utils.CollectionUtils;
 import group.g203.countables.base.utils.DisplayUtils;
 import group.g203.countables.custom_view.wear_recycler_view.ViewHolderPresenter;
+import group.g203.countables.custom_view.wear_recycler_view.WearListAdapter;
 import group.g203.countables.model.Countable;
 import group.g203.countables.path.detail.view.DetailActivity;
 
@@ -101,6 +109,52 @@ public class DetailPresenter extends BasePresenter implements ViewHolderPresente
     }
 
     public void dataChanged(DataEventBuffer dataEvents) {
+        for (DataEvent event : dataEvents) {
+            int eventType = event.getType();
+            if (eventType == DataEvent.TYPE_CHANGED || eventType == DataEvent.TYPE_DELETED) {
+                DataItem item = event.getDataItem();
+                if (item.getUri().getPath().compareTo(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data)) == 0) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    ArrayList<String> countableData = dataMap.getStringArrayList(mContext.getString(R.string.get_all_countables_key));
+                    if (CollectionUtils.isEmpty(countableData) ) {
+                        finishActivity(((DetailActivity) mGeneralView));
+                    } else {
+                        ArrayList<Countable> countables = new ArrayList<>(countableData.size());
+                        for (String data : countableData) {
+                            try {
+                                countables.add(new Countable(data));
+                            } catch (JSONException e) {
+                                displayToast(mContext.getString(R.string.wear_data_error));
+                            }
+                        }
 
+                        Countable detailCountable = getDetailCountable(countables);
+
+                        if (detailCountable == null) {
+                            finishActivity(((DetailActivity) mGeneralView));
+                        } else if (detailCountable.timesCompleted != mAdapter.mDetailCountable.id || detailCountable.index != mAdapter.mDetailCountable.index) {
+                            WearListAdapter adapter = new WearListAdapter(getCountableOptions(), detailCountable, mContext);
+                            mRecyclerView.swapAdapter(adapter, false);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private Countable getDetailCountable(List<Countable> countables) {
+        Countable detailCountable = null;
+        for (Countable countable : countables) {
+            if (mAdapter.mDetailCountable.id == countable.id) {
+                detailCountable = countable;
+            }
+        }
+        return detailCountable;
+    }
+
+    private void finishActivity(Activity activity) {
+        if (activity != null) {
+            activity.finish();
+        }
     }
 }

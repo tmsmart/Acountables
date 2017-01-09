@@ -19,10 +19,10 @@ public class WearListAdapter extends WearableRecyclerView.Adapter<WearListViewHo
 
     ArrayList<Countable> mData;
     ArrayList<String> mStringData;
-    Countable mDetailCountable;
     String mType;
     Context mContext;
     ViewHolderPresenter mPresenter;
+    public Countable mDetailCountable;
 
     public WearListAdapter(ArrayList<Countable> mData, Context mContext) {
         this.mData = mData;
