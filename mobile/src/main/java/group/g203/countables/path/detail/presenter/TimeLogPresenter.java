@@ -10,10 +10,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
+
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import group.g203.countables.R;
 import group.g203.countables.base.Constants;
+import group.g203.countables.base.manager.GsonManager;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.utils.CalendarUtils;
 import group.g203.countables.base.utils.CollectionUtils;
@@ -26,6 +35,7 @@ import group.g203.countables.path.detail.view.DetailActivity;
 import group.g203.countables.path.detail.view.TimeLogFragment;
 import group.g203.countables.path.detail.view.TimeLogView;
 import io.realm.Realm;
+import io.realm.Sort;
 
 public class TimeLogPresenter implements BasePresenter {
 
@@ -173,8 +183,10 @@ public class TimeLogPresenter implements BasePresenter {
                                     mEmptyView.setVisibility(View.VISIBLE);
                                 }
                                 displaySnackbarMessage(REVERT);
+                                sendCountableDataToWear();
                             }
                         }, null);
+                sendCountableDataToWear();
             }
         });
     }
@@ -183,5 +195,27 @@ public class TimeLogPresenter implements BasePresenter {
         if (mCountable == null) {
             bindModels();
         }
+    }
+
+    void sendCountableDataToWear() {
+        ArrayList<String> countableList = new ArrayList<>(1);
+
+        getRealmInstance().beginTransaction();
+        List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
+        getRealmInstance().commitTransaction();
+
+        if (CollectionUtils.isEmpty(allCountables, true)) {
+        } else {
+            countableList = new ArrayList<>(allCountables.size());
+            for (Countable countable : allCountables) {
+                countableList.add(GsonManager.toJson(countable));
+            }
+        }
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
+        putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
+        putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(((DetailActivity)((TimeLogFragment)mTimeLogView).getActivity()).mClient, putDataReq);
     }
 }

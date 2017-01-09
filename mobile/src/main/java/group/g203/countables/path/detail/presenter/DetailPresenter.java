@@ -383,6 +383,8 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
 
         ((TextView) mView.findViewById(R.id.tvCountableTitle)).setText(countableName);
         DisplayUtils.displayToast(mContext, COUNTABLE_EDITED, Toast.LENGTH_SHORT);
+
+        sendCountableDataToWear();
     }
 
     public void setCompletedCount(String count) {
@@ -642,7 +644,7 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
                         if (fragment != null) {
                             fragment.getPresenter().handleInitialContentDisplay();
                         } else {
-                            DisplayUtils.displayToast(mContext, mContext.getString(R.string.countable_edit_error), Toast.LENGTH_SHORT);
+                            DisplayUtils.displayToast(mContext, mContext.getString(R.string.wear_data_error), Toast.LENGTH_SHORT);
                         }
                     }
                     handleInitDisplay(mNavIndex);
