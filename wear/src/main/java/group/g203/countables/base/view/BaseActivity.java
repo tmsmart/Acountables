@@ -54,6 +54,8 @@ public class BaseActivity extends Activity implements BaseView, DataApi.DataList
         mTopText = (TextView) findViewById(R.id.tvTopText);
         mButton = (CircledImageView) findViewById(R.id.cvButton);
         mButtonText = (TextView) findViewById(R.id.tvButtonText);
+
+
     }
 
     @Override

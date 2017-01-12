@@ -50,30 +50,22 @@ public class MainActivity extends AppCompatActivity implements MainView, DataApi
     public GoogleApiClient mClient;
     public Node mNode;
     MainPresenter mPresenter;
+    Bundle mStateBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LayoutInflater inflater = (LayoutInflater) this
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mView = inflater.inflate(R.layout.activity_main, null, false);
-        setContentView(mView);
-        ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        mClient = new GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        setPresenterFromState(savedInstanceState);
-        setEmptyParams();
-        handleContentDisplay();
+        mStateBundle = savedInstanceState;
     }
 
     protected void onNewIntent(Intent intent) {
         this.setIntent(intent);
-        setPresenter(new MainPresenter());
+        MainPresenter presenter = (BasePresenterManager.getInstance().getMainPresenter());
+        if (presenter != null) {
+            setPresenter(presenter);
+        } else {
+            setPresenter(new MainPresenter());
+        }
         if (intent != null && !TextUtils.isEmpty(intent.getAction()) && intent.getAction().contains(getString(R.string.wear_connection))) {
             mPresenter.displayToast(intent.getAction());
         }
@@ -101,6 +93,19 @@ public class MainActivity extends AppCompatActivity implements MainView, DataApi
     @Override
     protected void onStart() {
         super.onStart();
+        LayoutInflater inflater = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mView = inflater.inflate(R.layout.activity_main, null, false);
+        setContentView(mView);
+        ButterKnife.bind(this);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        mClient = new GoogleApiClient.Builder(this)
+                .addApi(Wearable.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        setPresenterFromState(mStateBundle);
         if (mClient != null && !mClient.isConnected() && !mClient.isConnecting()) {
             mClient.connect();
         }
@@ -109,15 +114,15 @@ public class MainActivity extends AppCompatActivity implements MainView, DataApi
     @Override
     public void onResume() {
         super.onResume();
-        if (mPresenter.mAdapter != null) {
-            mPresenter.mAdapter.notifyDataSetChanged();
-        }
+        setEmptyParams();
+        handleContentDisplay();
         mPresenter.onGoogleApiConnected();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        BasePresenterManager.getInstance().savePresenter(mPresenter);
         if (mClient != null) {
             Wearable.DataApi.removeListener(mClient, this);
         }
@@ -176,6 +181,12 @@ public class MainActivity extends AppCompatActivity implements MainView, DataApi
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle bundle) {
+        super.onRestoreInstanceState(bundle);
+    }
+
+
     public void setEmptyParams() {
         mPresenter.setEmptyIcon(R.mipmap.ic_empty_file);
         mPresenter.setEmptyMessage(getString(R.string.no_countables));
@@ -188,12 +199,10 @@ public class MainActivity extends AppCompatActivity implements MainView, DataApi
 
     @Override
     public void onConnectionSuspended(int i) {
-        mPresenter.displayToast(getString(R.string.connection_error));
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        mPresenter.displayToast(getString(R.string.connection_error));
     }
 
     @Override

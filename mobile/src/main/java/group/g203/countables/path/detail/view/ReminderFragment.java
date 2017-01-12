@@ -122,6 +122,7 @@ public class ReminderFragment extends Fragment implements ReminderView {
         if (tvAmPm.getCurrentTextColor() == activeColorInt && tvHours.getCurrentTextColor() == activeColorInt &&
                 tvMins.getCurrentTextColor() == activeColorInt) {
             mPresenter.saveReminderTime(tvAmPm.getText().toString().equals(getString(R.string.am)));
+            mPresenter.setEnabledView();
         }
     }
 }

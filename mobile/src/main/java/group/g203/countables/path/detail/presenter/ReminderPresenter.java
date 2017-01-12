@@ -123,14 +123,18 @@ public class ReminderPresenter implements BasePresenter {
                 llReminderInfo.setVisibility(View.VISIBLE);
                 setSwitch();
             } else {
-                mSwitch.setVisibility(View.GONE);
-                llReminderInfo.setVisibility(View.GONE);
-                mIsSetLayout.setVisibility(View.VISIBLE);
-                styleReadData();
-                setEditClick();
-                setDeleteClick();
+                setEnabledView();
             }
         }
+    }
+
+    public void setEnabledView() {
+        mSwitch.setVisibility(View.GONE);
+        llReminderInfo.setVisibility(View.GONE);
+        mIsSetLayout.setVisibility(View.VISIBLE);
+        styleReadData();
+        setEditClick();
+        setDeleteClick();
     }
 
     public void setSwitch() {

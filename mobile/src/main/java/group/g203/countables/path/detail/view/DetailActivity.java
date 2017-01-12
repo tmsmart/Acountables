@@ -101,7 +101,7 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
 
     protected void onNewIntent(Intent intent) {
         this.setIntent(intent);
-        if (!TextUtils.isEmpty(intent.getAction()) && ComparisonUtils.isNumber(intent.getAction())) {
+        if (intent != null && !TextUtils.isEmpty(intent.getAction()) && ComparisonUtils.isNumber(intent.getAction())) {
             setPresenter(new DetailPresenter(Integer.parseInt(intent.getAction())));
         } else {
             setPresenter(new DetailPresenter());
@@ -237,6 +237,11 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle bundle) {
+        super.onRestoreInstanceState(bundle);
+    }
+
+    @Override
     public void onDeleteCountableClick(DeleteDialog dialog) {
         mPresenter.deleteAndGoBack();
     }
@@ -278,12 +283,10 @@ public class DetailActivity extends AppCompatActivity implements DetailView, Del
 
     @Override
     public void onConnectionSuspended(int i) {
-        mPresenter.displayToast(getString(R.string.connection_error));
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        mPresenter.displayToast(getString(R.string.connection_error));
     }
 
     @Override
