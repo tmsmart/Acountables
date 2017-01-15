@@ -575,6 +575,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         displayLoading();
         getRealmInstance().beginTransaction();
         final TempCountable tempCountable = TempCountable.createTempCountable(countable);
+        BaseTimingManager.getInstance(mContext).cancelTimeBasedAction(countable);
         countable.deleteFromRealm();
         mAdapter.setData(getRealmInstance().where(Countable.class).findAll());
         getRealmInstance().commitTransaction();
@@ -615,6 +616,8 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     countable.lastModified = tempCountable.lastModified;
                     countable.timesCompleted = tempCountable.timesCompleted;
                     countable.dayRepeater = tempCountable.dayRepeater;
+
+                    BaseTimingManager.getInstance(mContext).setTimeBasedAction(countable);
 
                     RealmResults<Countable> countables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
                     getRealmInstance().commitTransaction();

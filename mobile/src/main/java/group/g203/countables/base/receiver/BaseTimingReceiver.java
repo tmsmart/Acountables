@@ -23,14 +23,15 @@ public class BaseTimingReceiver extends BroadcastReceiver {
 
         getRealmInstance().beginTransaction();
         mCountable = getRealmInstance().where(Countable.class).equalTo(Constants.ID, countableId).findFirst();
+        if (mCountable != null) {
+            DateField date = getRealmInstance().createObject(DateField.class);
+            date.date = new Date();
 
-        DateField date = getRealmInstance().createObject(DateField.class);
-        date.date = new Date();
-
-        mCountable.accountableDates.add(date);
+            mCountable.accountableDates.add(date);
+        }
         getRealmInstance().commitTransaction();
 
-        if (mCountable.isReminderEnabled) {
+        if (mCountable != null && mCountable.isReminderEnabled) {
             ManagerOfNotifications.getInstance(context)
                     .sendNotification(ManagerOfNotifications.getInstance(context)
                             .buildNotification(mCountable.name, Integer.toString(mCountable.id)));
