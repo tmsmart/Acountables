@@ -6,8 +6,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.NotificationCompat;
 
 import java.util.HashSet;
 
@@ -58,7 +58,7 @@ public class ManagerOfNotifications {
         Intent notificationDeleteIntent = new Intent(mContext, ReminderDeleteReceiver.class);
         PendingIntent pendingDeleteIntent =
                 PendingIntent.getBroadcast(mContext, REMINDER_ID,
-                        notificationDeleteIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        notificationDeleteIntent, Constants.ZERO);
         builder.setDeleteIntent(pendingDeleteIntent);
 
         Intent notificationClickIntent = new Intent(mContext, ReminderClickReceiver.class);
@@ -66,7 +66,7 @@ public class ManagerOfNotifications {
                 ? mContext.getString(R.string.multiple_reminders) : id);
         PendingIntent pendingClickIntent =
                 PendingIntent.getBroadcast(mContext, REMINDER_ID,
-                        notificationClickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                        notificationClickIntent, Constants.ZERO);
 
         builder.setContentIntent(pendingClickIntent);
 

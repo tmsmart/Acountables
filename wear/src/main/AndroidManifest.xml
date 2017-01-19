@@ -11,14 +11,18 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/title_activity_main">
+            android:name=".path.main.view.MainActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".path.detail.view.DetailActivity">
+        </activity>
+        <activity
+            android:name="android.support.wearable.activity.ConfirmationActivity">
+        </activity>
     </application>
-
 </manifest>

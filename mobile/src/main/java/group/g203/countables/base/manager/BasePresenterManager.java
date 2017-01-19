@@ -3,10 +3,12 @@ package group.g203.countables.base.manager;
 import android.os.Bundle;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import group.g203.countables.base.presenter.BasePresenter;
+import group.g203.countables.path.main.presenter.MainPresenter;
 
 public class BasePresenterManager {
 
@@ -34,7 +36,6 @@ public class BasePresenterManager {
         if (mPresenterMap.containsKey(mPresenterId)) {
             presenter = (P) mPresenterMap.get(mPresenterId);
         }
-        mPresenterMap.clear();
         return presenter;
     }
 
@@ -42,5 +43,26 @@ public class BasePresenterManager {
         mPresenterId = mAtomicId.incrementAndGet();
         mPresenterMap.put(mPresenterId, presenter);
         outState.putInt(PRESENTER_KEY, mPresenterId);
+    }
+
+    public <P extends BasePresenter> void savePresenter(P presenter) {
+        mPresenterId = mAtomicId.incrementAndGet();
+        mPresenterMap.put(mPresenterId, presenter);
+    }
+
+    public MainPresenter getMainPresenter() {
+        MainPresenter presenter = null;
+        if (mPresenterMap.isEmpty()) {
+            return null;
+        } else {
+            Iterator<Map.Entry<Integer, BasePresenter>> mapIt = mPresenterMap.entrySet().iterator();
+            while (mapIt.hasNext()) {
+                Map.Entry<Integer, BasePresenter> entry = mapIt.next();
+                if (entry.getValue() instanceof MainPresenter) {
+                    presenter = (MainPresenter) entry.getValue();
+                }
+            }
+            return presenter;
+        }
     }
 }

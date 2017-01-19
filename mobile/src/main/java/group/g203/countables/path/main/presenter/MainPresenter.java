@@ -19,6 +19,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.DataEvent;
+import com.google.android.gms.wearable.DataEventBuffer;
+import com.google.android.gms.wearable.DataItem;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.DataMapItem;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -29,9 +43,11 @@ import group.g203.countables.R;
 import group.g203.countables.base.Constants;
 import group.g203.countables.base.manager.BaseDialogManager;
 import group.g203.countables.base.manager.BaseTimingManager;
+import group.g203.countables.base.manager.GsonManager;
 import group.g203.countables.base.presenter.BasePresenter;
 import group.g203.countables.base.utils.CalendarUtils;
 import group.g203.countables.base.utils.CollectionUtils;
+import group.g203.countables.base.utils.ComparisonUtils;
 import group.g203.countables.base.utils.DisplayUtils;
 import group.g203.countables.base.view.BaseView;
 import group.g203.countables.base.view.ItemTouchHelperCallback;
@@ -65,9 +81,10 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     private final static String MAX_NAME_SUFFIX = " characters or less";
     private final static String NAME_MUST_BE_NONEMPTY = "Countable name cannot be empty";
     private final static String COUNTABLE_CREATED = "Countable created successfully";
+    private final static String COUNTABLE_DELETION_PROGRESS = "Countable deletion in progress...";
     private final static String COUNTABLE_DELETED = "Countable deleted successfully";
     private final static String COUNTABLE_CREATE_REVERTED = "Countable creation reverted successfully";
-    private final static String COUNTABLE_DELETE_REVERTED = "Countable deletion reverted successfully";
+    private final static String COUNTABLE_DELETE_REVERTED = "Countable deletion stopped successfully";
     private final static int AZ = 0;
     private final static int ZA = 1;
     private final static int RECENTLY_UPDATED = 2;
@@ -91,6 +108,8 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
     public ImageView mAddCountable;
     public Context mContext;
     public Snackbar mSnackbar;
+    public GoogleApiClient mClient;
+    public Node mNode;
 
     @Override
     public void bindModels() {
@@ -115,6 +134,9 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
 
         mAddCountable = ((MainActivity) mMainView).mAddCountable;
         mCountableField = ((MainActivity) mMainView).mCountableField;
+
+        mClient = ((MainActivity) mMainView).mClient;
+        mNode = ((MainActivity) mMainView).mNode;
         assignCountableTextListeners();
     }
 
@@ -204,6 +226,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                         sortByCompletedLeast();
                         break;
                 }
+                sendCountableDataToWear();
             }
         });
     }
@@ -421,7 +444,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         mCountableField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus){
+                if (hasFocus) {
                     dismissMainSnackbar();
                 }
             }
@@ -435,7 +458,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                 @Override
                 public void onClick(View v) {
                     mCountableField.clearFocus();
-                    InputMethodManager imm = (InputMethodManager)mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                    InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(mCountableField.getWindowToken(), 0);
                     createCountable();
                 }
@@ -481,6 +504,22 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     displayContent();
                     mCountablesRv.smoothScrollToPosition(addedCountable.index);
 
+                    ArrayList<String> countableList = new ArrayList<>(1);
+                    List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
+                    if (CollectionUtils.isEmpty(allCountables, true)) {
+                    } else {
+                        countableList = new ArrayList<>(allCountables.size());
+                        for (Countable countable : allCountables) {
+                            countableList.add(GsonManager.toJson(countable));
+                        }
+                    }
+                    PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
+                    putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
+                    putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
+                    PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+                    PendingResult<DataApi.DataItemResult> pendingResult =
+                            Wearable.DataApi.putDataItem(mClient, putDataReq);
+
                     setAndShowMainSnackbar(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -513,18 +552,32 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                 }
 
                 setAndShowMainSnackbar(null, null, COUNTABLE_CREATE_REVERTED);
+                ArrayList<String> countableList = new ArrayList<>(1);
+                List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
+                if (CollectionUtils.isEmpty(allCountables, true)) {
+                } else {
+                    countableList = new ArrayList<>(allCountables.size());
+                    for (Countable countable : allCountables) {
+                        countableList.add(GsonManager.toJson(countable));
+                    }
+                }
+                PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
+                putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
+                putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
+                PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+                PendingResult<DataApi.DataItemResult> pendingResult =
+                        Wearable.DataApi.putDataItem(mClient, putDataReq);
             }
         });
     }
 
     public void deleteCountableViaSwipe(final Countable countable) {
+        displayLoading();
         getRealmInstance().beginTransaction();
         final TempCountable tempCountable = TempCountable.createTempCountable(countable);
+        BaseTimingManager.getInstance(mContext).cancelTimeBasedAction(countable);
         countable.deleteFromRealm();
         mAdapter.setData(getRealmInstance().where(Countable.class).findAll());
-        if (getRealmInstance().where(Countable.class).findAll().size() == 0) {
-            displayEmptyView();
-        }
         getRealmInstance().commitTransaction();
 
         setAndShowMainSnackbar(new View.OnClickListener() {
@@ -535,10 +588,17 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         }, new Snackbar.Callback() {
             @Override
             public void onDismissed(Snackbar snackbar, int event) {
+                setAndShowMainSnackbar(null, null, COUNTABLE_DELETED);
                 if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
-                    getRealmInstance().beginTransaction();
-                    assignCountableIndices(getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING));
-                    getRealmInstance().commitTransaction();
+                    if (getRealmInstance().where(Countable.class).findAll().size() == 0) {
+                        displayEmptyView();
+                    } else {
+                        displayContent();
+                        getRealmInstance().beginTransaction();
+                        assignCountableIndices(getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING));
+                        getRealmInstance().commitTransaction();
+                    }
+                    sendCountableDataToWear();
                 } else {
                     displayLoading();
 
@@ -557,6 +617,8 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     countable.timesCompleted = tempCountable.timesCompleted;
                     countable.dayRepeater = tempCountable.dayRepeater;
 
+                    BaseTimingManager.getInstance(mContext).setTimeBasedAction(countable);
+
                     RealmResults<Countable> countables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
                     getRealmInstance().commitTransaction();
 
@@ -568,7 +630,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                     displayContent();
                 }
             }
-        }, COUNTABLE_DELETED, Constants.UNDO);
+        }, COUNTABLE_DELETION_PROGRESS, Constants.UNDO);
     }
 
     public void reorderCountablesViaDrag(final Countable countable, final int fromPosition,
@@ -590,6 +652,7 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
                 mAdapter.setData(countables);
             }
         });
+        sendCountableDataToWear();
     }
 
     RealmList<DateField> arrayListToDateRealmList(ArrayList<Date> dates, RealmList<DateField> dateFields) {
@@ -622,5 +685,73 @@ public class MainPresenter implements BasePresenter, CreditsDialogPresenter, Inf
         if (mSnackbar != null) {
             mSnackbar.dismiss();
         }
+    }
+
+    public void onGoogleApiConnected() {
+        if (mClient != null) {
+            Wearable.DataApi.addListener(mClient, ((MainActivity) mMainView));
+            Wearable.NodeApi.getConnectedNodes(mClient).setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
+                @Override
+                public void onResult(NodeApi.GetConnectedNodesResult nodes) {
+                    if (!CollectionUtils.isEmpty(nodes.getNodes(), false)) {
+                        for (Node node : nodes.getNodes()) {
+                            mNode = node;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public void dataChanged(DataEventBuffer dataEvents) {
+        for (DataEvent event : dataEvents) {
+            int eventType = event.getType();
+            if (eventType == DataEvent.TYPE_CHANGED) {
+                DataItem item = event.getDataItem();
+                List<String> pathSegments = item.getUri().getPathSegments();
+                if (ComparisonUtils.isNumber(pathSegments.get(0))) {
+                    DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    String countableData = dataMap.getString(mContext.getString(R.string.wear_countable_key));
+
+                    Countable wearCountable = GsonManager.fromJson(countableData);
+                    Countable dbCountable;
+                    getRealmInstance().beginTransaction();
+                    dbCountable = getRealmInstance().where(Countable.class).equalTo(Constants.ID, wearCountable.id).findFirst();
+                    dbCountable.timesCompleted = wearCountable.timesCompleted;
+                    dbCountable.lastModified = wearCountable.lastModified;
+
+                    DateField dateField = getRealmInstance().createObject(DateField.class);
+                    dateField.date = new Date();
+                    dbCountable.loggedDates.add(dateField);
+                    getRealmInstance().commitTransaction();
+
+                    mAdapter.notifyDataSetChanged();
+
+                    sendCountableDataToWear();
+                }
+            }
+        }
+    }
+
+    void sendCountableDataToWear() {
+        ArrayList<String> countableList = new ArrayList<>(1);
+
+        getRealmInstance().beginTransaction();
+        List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
+        getRealmInstance().commitTransaction();
+
+        if (CollectionUtils.isEmpty(allCountables, true)) {
+        } else {
+            countableList = new ArrayList<>(allCountables.size());
+            for (Countable countable : allCountables) {
+                countableList.add(GsonManager.toJson(countable));
+            }
+        }
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
+        putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
+        putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(mClient, putDataReq);
     }
 }
