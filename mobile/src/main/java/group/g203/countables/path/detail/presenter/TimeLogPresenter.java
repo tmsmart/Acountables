@@ -40,6 +40,8 @@ import io.realm.Sort;
 public class TimeLogPresenter implements BasePresenter {
 
     private final static String COMPLETED = "Successfully logged completion";
+    private final static String REMOVED ="Logged completion removed";
+    private final static String RESTORED ="Logged completion restored successfully";
     private final static String REVERT = "Latest completion reverted";
 
     Realm mRealm;
@@ -195,6 +197,61 @@ public class TimeLogPresenter implements BasePresenter {
         if (mCountable == null) {
             bindModels();
         }
+    }
+
+    void removeLoggedDate(int position) {
+        getRealmInstance().beginTransaction();
+
+        DateField df = mCountable.loggedDates.get(position);
+        final Date storedDate = df.date;
+        df.deleteFromRealm();
+        mCountable.timesCompleted = mCountable.loggedDates.size();
+        mCountable.lastModified = (mCountable.loggedDates.size() == 0) ? null :
+                mCountable.loggedDates.last().date;
+        mListener.onEditCompleteCount(Integer.toString(mCountable.loggedDates.size()));
+
+        getRealmInstance().commitTransaction();
+
+        mAdapter.setData(CalendarUtils.returnLoggedAndAccountableDates(mCountable.loggedDates,
+                mCountable.accountableDates));
+        mAdapter.notifyDataSetChanged();
+
+        if (!CollectionUtils.isEmpty(mCountable.loggedDates, true)) {
+            mTimeLogRv.smoothScrollToPosition(mCountable.loggedDates.size() - 1);
+        } else {
+            mEmptyView.setVisibility(View.VISIBLE);
+        }
+
+        DisplayUtils.displayActionSnackbar(mSnack,
+                REMOVED,
+                Constants.UNDO,
+                Snackbar.LENGTH_LONG, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getRealmInstance().beginTransaction();
+
+                        DateField dateField = new DateField();
+                        dateField.date = storedDate;
+
+                        mCountable.loggedDates.add(dateField);
+                        mCountable.timesCompleted = mCountable.loggedDates.size();
+                        mCountable.lastModified = dateField.date;
+                        mListener.onEditCompleteCount(Integer.toString(mCountable.loggedDates.size()));
+
+                        mEmptyView.setVisibility(View.GONE);
+
+                        getRealmInstance().commitTransaction();
+
+                        mAdapter.setData(CalendarUtils.returnLoggedAndAccountableDates(mCountable.loggedDates,
+                                mCountable.accountableDates));
+                        mAdapter.notifyDataSetChanged();
+                        mTimeLogRv.smoothScrollToPosition(mCountable.loggedDates.size() - 1);
+                        displaySnackbarMessage(RESTORED);
+                        sendCountableDataToWear();
+                    }
+                }, null);
+
+        sendCountableDataToWear();
     }
 
     void sendCountableDataToWear() {

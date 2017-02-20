@@ -1,5 +1,6 @@
 package group.g203.countables.path.detail.presenter;
 
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Date;
@@ -11,5 +12,7 @@ public interface DateViewHolderPresenter extends GeneralPresenter {
     void setDateFormat(TextView textView, Date date);
 
     void handleDateColor(TextView textView);
+
+    void setRemoveClick(ImageView imageView);
 
 }

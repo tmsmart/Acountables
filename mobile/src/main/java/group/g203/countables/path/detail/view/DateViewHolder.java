@@ -2,6 +2,7 @@ package group.g203.countables.path.detail.view;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -15,6 +16,8 @@ public class DateViewHolder extends RecyclerView.ViewHolder implements BaseView 
 
     @Bind(R.id.tvDate)
     public TextView tvDate;
+    @Bind(R.id.ivRemove)
+    public ImageView ivRemove;
     DateViewHolderPresenter mPresenter;
 
     public DateViewHolder(View itemView) {

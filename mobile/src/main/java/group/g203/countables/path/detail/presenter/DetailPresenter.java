@@ -466,6 +466,23 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
         }
     }
 
+    @Override
+    public void setRemoveClick(final ImageView imageView) {
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String tag = TimeLogFragment.TAG;
+                FragmentManager fm = ((DetailActivity) mDetailView).getSupportFragmentManager();
+                TimeLogFragment fragment = (TimeLogFragment) fm.findFragmentByTag(tag);
+                if (fragment != null) {
+                    fragment.getPresenter().removeLoggedDate((Integer) imageView.getTag());
+                } else {
+                    DisplayUtils.displayToast(mContext, mContext.getString(R.string.countable_edit_error), Toast.LENGTH_SHORT);
+                }
+            }
+        });
+    }
+
     void handleNavSelectionColor(View... views) {
         int selectionColor = ContextCompat.getColor(mContext, R.color.dark_app_green);
         ((TextView) views[0]).setTextColor(selectionColor);
