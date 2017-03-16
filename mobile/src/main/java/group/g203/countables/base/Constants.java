@@ -14,7 +14,7 @@ public class Constants {
 
     public static final String EMPTY_STRING = "";
 
-    public static final String PRESENTER_KEY = "presenterKey";
+    public static final String DATE = "date";
 
     public static final String INFO_TYPE = "infoType";
 

@@ -32,7 +32,7 @@ public class DateAdapter extends RecyclerView.Adapter<DateViewHolder> {
     @Override
     public void onBindViewHolder(DateViewHolder holder, int position) {
         setPresenter(holder);
-        holder.ivRemove.setTag(position);
+        holder.ivRemove.setTag(mDates.get(position));
         mPresenter.setDateFormat(holder.tvDate, mDates.get(position));
         mPresenter.handleDateColor(holder.tvDate);
         mPresenter.setRemoveClick(holder.ivRemove);

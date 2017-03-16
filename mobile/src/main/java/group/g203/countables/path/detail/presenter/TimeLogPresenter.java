@@ -185,10 +185,10 @@ public class TimeLogPresenter implements BasePresenter {
                                     mEmptyView.setVisibility(View.VISIBLE);
                                 }
                                 displaySnackbarMessage(REVERT);
-                                sendCountableDataToWear();
+                                sendCountableDataToWear((DetailActivity) mSnack.getContext());
                             }
                         }, null);
-                sendCountableDataToWear();
+                sendCountableDataToWear((DetailActivity) mSnack.getContext());
             }
         });
     }
@@ -199,10 +199,10 @@ public class TimeLogPresenter implements BasePresenter {
         }
     }
 
-    void removeLoggedDate(int position) {
+    void removeLoggedDate(Date date) {
         getRealmInstance().beginTransaction();
 
-        DateField df = mCountable.loggedDates.get(position);
+        DateField df = getRealmInstance().where(DateField.class).equalTo(Constants.DATE, date).findFirst();
         final Date storedDate = df.date;
         df.deleteFromRealm();
         mCountable.timesCompleted = mCountable.loggedDates.size();
@@ -247,32 +247,34 @@ public class TimeLogPresenter implements BasePresenter {
                         mAdapter.notifyDataSetChanged();
                         mTimeLogRv.smoothScrollToPosition(mCountable.loggedDates.size() - 1);
                         displaySnackbarMessage(RESTORED);
-                        sendCountableDataToWear();
+                        sendCountableDataToWear((DetailActivity) mSnack.getContext());
                     }
                 }, null);
 
-        sendCountableDataToWear();
+        sendCountableDataToWear((DetailActivity) mSnack.getContext());
     }
 
-    void sendCountableDataToWear() {
-        ArrayList<String> countableList = new ArrayList<>(1);
+    public void sendCountableDataToWear(DetailActivity activity) {
+        if (activity != null) {
+            ArrayList<String> countableList = new ArrayList<>(1);
 
-        getRealmInstance().beginTransaction();
-        List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
-        getRealmInstance().commitTransaction();
+            getRealmInstance().beginTransaction();
+            List<Countable> allCountables = getRealmInstance().where(Countable.class).findAll().sort(Constants.INDEX, Sort.ASCENDING);
+            getRealmInstance().commitTransaction();
 
-        if (CollectionUtils.isEmpty(allCountables, true)) {
-        } else {
-            countableList = new ArrayList<>(allCountables.size());
-            for (Countable countable : allCountables) {
-                countableList.add(GsonManager.toJson(countable));
+            if (CollectionUtils.isEmpty(allCountables, true)) {
+            } else {
+                countableList = new ArrayList<>(allCountables.size());
+                for (Countable countable : allCountables) {
+                    countableList.add(GsonManager.toJson(countable));
+                }
             }
+            PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
+            putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
+            putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
+            PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+            PendingResult<DataApi.DataItemResult> pendingResult =
+                    Wearable.DataApi.putDataItem(activity.mClient, putDataReq);
         }
-        PutDataMapRequest putDataMapReq = PutDataMapRequest.create(Constants.FORWARD_SLASH + mContext.getString(R.string.all_countable_data));
-        putDataMapReq.getDataMap().putStringArrayList(mContext.getString(R.string.get_all_countables_key), countableList);
-        putDataMapReq.getDataMap().putLong(mContext.getString(R.string.data_map_time), System.currentTimeMillis());
-        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
-        PendingResult<DataApi.DataItemResult> pendingResult =
-                Wearable.DataApi.putDataItem(((DetailActivity)((TimeLogFragment)mTimeLogView).getActivity()).mClient, putDataReq);
     }
 }

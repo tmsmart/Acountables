@@ -475,7 +475,7 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
                 FragmentManager fm = ((DetailActivity) mDetailView).getSupportFragmentManager();
                 TimeLogFragment fragment = (TimeLogFragment) fm.findFragmentByTag(tag);
                 if (fragment != null) {
-                    fragment.getPresenter().removeLoggedDate((Integer) imageView.getTag());
+                    fragment.getPresenter().removeLoggedDate((Date)imageView.getTag());
                 } else {
                     DisplayUtils.displayToast(mContext, mContext.getString(R.string.countable_edit_error), Toast.LENGTH_SHORT);
                 }
@@ -670,7 +670,7 @@ public class DetailPresenter implements BasePresenter, InfoDialogPresenter, Dele
         }
     }
 
-    void sendCountableDataToWear() {
+    public void sendCountableDataToWear() {
         ArrayList<String> countableList = new ArrayList<>(1);
 
         getRealmInstance().beginTransaction();
